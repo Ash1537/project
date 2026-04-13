@@ -9,7 +9,7 @@ export default function handler(req, res) {
         <meta property="og:title" content="${name}" />
         <meta property="og:description" content="KatCard Profile" />
         <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=${name}" />
-        <meta property="og:url" content="https://${req.headers.host}/user/${uid}" />
+        <meta property="og:url" content="https://${req.headers.host}/${uid}" />
       </head>
       <body>
         Profile page for ${name}
