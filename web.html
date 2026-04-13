@@ -1691,19 +1691,19 @@
   }
 
   async function loadProfileFromCloud(userId) {
-  try {
-    if (!window.db) return null;
-    const snap = await getDoc(doc(db, "profiles", userId));
-    if (snap.exists()) {
-      console.log("✅ Loaded from Firebase");
-      return snap.data();
+    try {
+      if (!window.db) return null;
+      const snap = await getDoc(doc(db, "profiles", userId));
+      if (snap.exists()) {
+        console.log("✅ Loaded from Firebase");
+        return snap.data();
+      }
+      return null;
+    } catch (e) {
+      console.error("❌ Firebase load error:", e);
+      return null;
     }
-    return null;
-  } catch (e) {
-    console.error("❌ Firebase load error:", e);
-    return null;
   }
-}
 
   function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
