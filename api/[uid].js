@@ -5,8 +5,9 @@ export default function handler(req, res) {
     <html>
       <head>
         <meta property="og:title" content="${uid}" />
-        <meta property="og:description" content="Profile preview" />
+        <meta property="og:description" content="Profile preview for ${uid}" />
         <meta property="og:image" content="https://dummyimage.com/1200x630/000/fff&text=${uid}" />
+        <meta property="og:type" content="website" />
       </head>
       <body>
         Hello ${uid}
