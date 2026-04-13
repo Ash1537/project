@@ -16,8 +16,9 @@
     "url": "https://github.com/Ash1537/project/issues"
   },
   "homepage": "https://github.com/Ash1537/project#readme",
-  "description": "",
   "dependencies": {
     "firebase-admin": "^13.8.0"
-  }
+  },
+  "devDependencies": {},
+  "description": ""
 }
