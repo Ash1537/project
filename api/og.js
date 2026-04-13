@@ -5,21 +5,19 @@ if (!admin.apps.length) {
     credential: admin.credential.cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
     }),
   });
 }
 
 export default async function handler(req, res) {
-  const { uid } = req.query;
-
   try {
-    const user = await admin.auth().getUser(uid);
+    const { uid } = req.query;
 
     res.status(200).json({
       success: true,
-      uid: user.uid,
-      email: user.email,
+      uid,
+      message: "Hello " + uid,
     });
 
   } catch (error) {
