@@ -6,9 +6,9 @@ export default function handler(req, res) {
   return res.status(200).send(`
     <html>
       <head>
-        <meta property="og:title" content="${name}" />
-        <meta property="og:description" content="KatCard Profile" />
-        <meta property="og:image" content="https://yourdomain.com/preview.png" />
+        <meta property="og:title" content="KatCard Profile: ${uid}" />
+        <meta property="og:description" content="View ${uid}'s professional profile on KatCard." />
+        <meta property="og:image" content="${user.profileImage}" />
         <meta property="og:url" content="https://yourdomain.com/api/og?uid=${uid}" />
       </head>
       <body>
