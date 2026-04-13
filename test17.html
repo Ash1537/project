@@ -1,0 +1,3541 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KatCard — Premium Digital Identity</title>
+  <!-- Open Graph Meta Tags (THESE ARE PLACEHOLDERS for client-side. Social media crawlers DO NOT execute JS to populate them. True dynamic OG requires a backend.) -->
+  <meta property="og:title" content="KatCard Profile" id="og-title" />
+  <meta property="og:description" content="Check out this professional KatCard profile." id="og-description" />
+  <meta property="og:type" content="profile" />
+  <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=KatCard+Profile" id="og-image" /> <!-- Generic placeholder. Will be updated for browsers but not social media crawlers. -->
+  <meta property="og:url" content="" id="og-url" /> <!-- Will be set dynamically by JS when viewed in browser. -->
+  <style>
+    :root{
+      --bg:#0a0a0a;
+      --panel:#141414;
+      --panel2:#1a1a1a;
+      --line:#2a2a2a;
+      --muted:#a3a3a3;
+      --text:#f5f5f5;
+      --white:#ffffff;
+      --gold:#c9a96e;
+      --gold2:#d4b87a;
+      --bad:#ef4444;
+      --ok:#22c55e;
+
+      --r12:12px;
+      --r16:16px;
+      --r20:20px;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --shadow2: 0 10px 30px rgba(0,0,0,.35);
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --t: 220ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background: radial-gradient(1200px 700px at 15% -10%, rgba(201,169,110,.10), transparent 55%),
+                  radial-gradient(900px 600px at 100% 0%, rgba(201,169,110,.08), transparent 50%),
+                  var(--bg);
+      color:var(--text);
+      overflow:hidden;
+    }
+
+    /* Layout */
+    .app{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+    .topbar{
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 0 18px;
+      border-bottom:1px solid var(--line);
+      background: rgba(10,10,10,.78);
+      backdrop-filter: blur(16px);
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+    .brand{
+      display:flex;
+      align-items:center; /* Ensures logo and tagline are vertically aligned */
+      gap:10px;
+      user-select:none;
+      text-decoration: none; /* Ensure link style is clean */
+    }
+    .brand .logo{
+      font-family:var(--serif);
+      font-weight:700;
+      letter-spacing:.02em;
+      font-size:20px;
+      color:var(--white);
+    }
+    .brand .logo span{color:var(--gold)}
+    .brand .tag{
+      font-size:13px;
+      color:var(--muted);
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:13px;
+      max-width:min(56vw,380px);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .main{
+      flex:1;
+      min-height:0;
+      display:flex;
+      overflow:hidden;
+    }
+
+    /* Pages */
+    .page{
+      width:100%;
+      height:100%;
+      display:none;
+      overflow:auto;
+      padding:20px;
+    }
+    .page.active{display:block}
+
+    .container{max-width:1100px;margin:0 auto}
+    .grid-2{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:24px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      body{overflow:auto}
+      .main{overflow:auto}
+      .grid-2{grid-template-columns:1fr; gap:20px;}
+    }
+
+    /* Cards */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:var(--r16);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:16px 20px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:700;
+    }
+    .card .bd{padding:20px;}
+    .subtle{color:var(--muted);font-size:13px}
+    .title{
+      font-family:var(--serif);
+      font-weight:700;
+      margin:0 0 10px 0;
+      font-size:36px;
+      letter-spacing:-.02em;
+      line-height:1.15;
+    }
+    @media (max-width:560px){
+      .title{font-size:28px;}
+    }
+    .lead{color:var(--muted);max-width:66ch;margin:0}
+
+    /* Buttons */
+    .btn{
+      appearance:none;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--text);
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:600;
+      font-size:14px;
+      cursor:pointer;
+      transition: var(--t);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      line-height:1;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none !important}
+    .btn.primary{
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      border-color: rgba(0,0,0,.25);
+      color:#0b0b0b;
+      box-shadow: 0 12px 30px rgba(201,169,110,.18);
+    }
+    .btn.primary:hover{filter:saturate(1.03); transform: translateY(-1px)}
+    .btn.ghost{
+      border-color: var(--line);
+      background: rgba(255,255,255,.02);
+      color:var(--text);
+    }
+    .btn.ghost:hover{border-color: rgba(201,169,110,.55)}
+    .btn.link{
+      border-color: transparent;
+      padding:8px 8px;
+      color: var(--gold);
+    }
+    .btn.link:hover{color:var(--gold2); background: rgba(201,169,110,.07)}
+    .btn.danger{
+      border-color: rgba(239,68,68,.35);
+      background: rgba(239,68,68,.08);
+      color:#fecaca;
+    }
+    .btn.danger:hover{background: rgba(239,68,68,.12);}
+
+    /* Inputs */
+    .field{display:flex; flex-direction:column; gap:8px; margin-bottom:16px}
+    label{font-size:13px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+    .input, textarea, select{
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color:var(--text);
+      border-radius:12px;
+      padding:12px;
+      outline:none;
+      transition: var(--t);
+      font-size:15px;
+    }
+    textarea{resize:vertical; min-height:100px}
+    .input:focus, textarea:focus, select:focus{
+      border-color: rgba(201,169,110,.7);
+      box-shadow: 0 0 0 4px rgba(201,169,110,.10);
+    }
+    .row{display:grid;grid-template-columns:1fr 1fr; gap:16px}
+    @media (max-width:560px){.row{grid-template-columns:1fr}}
+    .pw-wrap{position:relative}
+    .pw-toggle{
+      position:absolute; right:10px; top:50%;
+      transform:translateY(-50%);
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      color:var(--muted);
+      border-radius:10px;
+      padding:7px 10px;
+      cursor:pointer;
+      transition: var(--t);
+      font-size:12px;
+    }
+    .pw-toggle:hover{border-color: rgba(201,169,110,.6); color:var(--text)}
+    .hint{font-size:12px;color:var(--muted)}
+    .msg{
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      font-size:13px;
+      margin-bottom:16px;
+      animation: fadeIn .18s ease-out;
+    }
+    .msg.err{border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.08); color:#fecaca}
+    .msg.ok{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); color:#bbf7d0}
+    .msg.info{border-color: rgba(201,169,110,.35); background: rgba(201,169,110,.08); color:#fde68a}
+    @keyframes fadeIn{from{opacity:0; transform: translateY(-4px)}to{opacity:1; transform:none}}
+
+    /* Auth */
+    .auth-shell{
+      min-height: calc(100vh - 72px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px 0;
+    }
+    .auth-card{
+      max-width: 440px;
+      width: 100%;
+    }
+    .auth-head{
+      text-align:center;
+      padding:24px 20px 16px;
+    }
+    .auth-head h1{
+      margin:0;
+      font-family:var(--serif);
+      font-size:30px;
+      letter-spacing:-.02em;
+    }
+    .auth-head p{margin:8px 0 0; color:var(--muted); font-size:14px}
+
+    .opt-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-top:8px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    .check{
+      display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
+      color:var(--muted); font-size:13px;
+    }
+    .check input{accent-color: var(--gold)}
+    .divider{
+      display:flex; align-items:center; gap:12px; color:var(--muted);
+      font-size:12px; margin:18px 0;
+    }
+    .divider:before,.divider:after{content:""; height:1px; background:var(--line); flex:1}
+    .oauth{
+      width:100%;
+      background: var(--white);
+      color:#0a0a0a;
+      border:1px solid rgba(0,0,0,.1);
+    }
+    .oauth:hover{filter:brightness(.98)}
+    .spinner{
+      width:18px;height:18px;border-radius:50%;
+      border:2px solid rgba(0,0,0,.2);
+      border-top-color: rgba(0,0,0,.75);
+      animation: spin .85s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Dashboard */
+    .dash{
+      display:grid;
+      grid-template-columns: 260px 1fr;
+      gap:24px;
+      align-items:start;
+      min-height: 100%;
+    }
+    @media (max-width: 980px){.dash{grid-template-columns:1fr; gap:20px;}}
+    .side{
+      position:sticky;
+      top: 88px;
+      padding-top: 10px; /* Adjusted for better spacing */
+      padding-bottom: 10px;
+    }
+    @media (max-width:980px){.side{position:relative; top:auto}}
+    .navbox{
+      display:flex; flex-direction:column; gap:10px;
+      padding:10px 0;
+    }
+    .navitem{
+      width:100%;
+      justify-content:flex-start;
+      border-color: var(--line);
+      background: rgba(255,255,255,.02);
+      color: var(--text);
+      padding:12px 14px;
+      border-radius:12px;
+    }
+    .navitem.active{
+      border-color: rgba(201,169,110,.55);
+      box-shadow: 0 0 0 4px rgba(201,169,110,.08);
+    }
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top:16px;
+    }
+    @media (max-width:560px){.kpi{grid-template-columns:1fr}}
+    .kpi .box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background: rgba(255,255,255,.02);
+    }
+    .kpi .big{font-size:22px; font-weight:800; color:var(--white)}
+    .kpi .lab{font-size:13px; color:var(--muted)}
+
+    /* Image pickers */
+    .img-row{display:flex; gap:16px; align-items:center; flex-wrap:wrap}
+    .avatar{
+      width:120px; height:120px; border-radius:999px;
+      border:1px dashed rgba(201,169,110,.45);
+      background: rgba(201,169,110,.06);
+      display:grid; place-items:center;
+      overflow:hidden;
+      cursor:pointer;
+      transition: var(--t);
+    }
+    .avatar:hover{border-style:solid}
+    .avatar img{width:100%;height:100%;object-fit:cover}
+    .cover{
+      width:100%;
+      height:180px;
+      border-radius:16px;
+      border:1px dashed rgba(201,169,110,.35);
+      background: rgba(255,255,255,.02);
+      display:grid; place-items:center;
+      overflow:hidden;
+      cursor:pointer;
+      transition: var(--t);
+    }
+    .cover:hover{border-style:solid}
+    .cover img{width:100%;height:100%;object-fit:cover}
+    .presets{
+      display:grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap:10px;
+    }
+    @media (max-width:560px){.presets{grid-template-columns: repeat(3, minmax(0, 1fr));}}
+    .preset{
+      height:50px;
+      border-radius:12px;
+      border:1px solid transparent;
+      cursor:pointer;
+      transition: var(--t);
+    }
+    .preset:hover{border-color: rgba(201,169,110,.55)}
+    .preset.active{border-color: rgba(201,169,110,.95); box-shadow: 0 0 0 3px rgba(201,169,110,.12)}
+    .chip-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      font-size:13px;
+    }
+    .chip button{
+      border:none; background:transparent; color:var(--muted); cursor:pointer;
+      font-size:16px; line-height:1;
+    }
+    .chip button:hover{color:var(--white)}
+    .color-row{display:flex; gap:12px; flex-wrap:wrap}
+    .swatch{
+      width:40px; height:40px; border-radius:999px;
+      border:2px solid rgba(255,255,255,.12);
+      cursor:pointer;
+      transition: var(--t);
+    }
+    .swatch.active{border-color: rgba(255,255,255,.9); box-shadow: 0 0 0 4px rgba(201,169,110,.14)}
+    .template-list{display:grid; gap:12px}
+    .tpl{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background: rgba(255,255,255,.02);
+      cursor:pointer;
+      transition: var(--t);
+    }
+    .tpl:hover{border-color: rgba(201,169,110,.55)}
+    .tpl.active{border-color: rgba(201,169,110,.95); box-shadow: 0 0 0 4px rgba(201,169,110,.10)}
+    .tpl .name{font-weight:800; font-size:15px}
+    .tpl .desc{font-size:13px;color:var(--muted);margin-top:4px}
+
+    /* Posts */
+    .create-post{
+      border:1px dashed rgba(201,169,110,.45);
+      background: rgba(201,169,110,.06);
+      padding:18px;
+      border-radius:16px;
+      cursor:pointer;
+      transition: var(--t);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:20px;
+    }
+    .create-post:hover{border-style:solid}
+    .create-post .left{
+      display:flex; align-items:center; gap:14px;
+    }
+    .plus{
+      width:48px;height:48px;border-radius:14px;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.08);
+      display:grid; place-items:center;
+      font-size:20px;
+    }
+    .posts{display:grid; gap:16px; margin-top:16px}
+    .post{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: rgba(255,255,255,.02);
+      overflow:hidden;
+    }
+    .post .meta{
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--line);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .post .content{padding:16px}
+    .post .content .txt{white-space:pre-wrap; font-size:15px; color:var(--text)}
+    .post img{width:100%;display:block}
+    .iconbtn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color:var(--muted);
+      border-radius:10px;
+      padding:8px 10px;
+      cursor:pointer;
+      transition: var(--t);
+    }
+    .iconbtn:hover{border-color: rgba(239,68,68,.55); color:#fecaca}
+
+    /* Preview */
+    .previewShell{
+      position:sticky;
+      top:88px;
+    }
+    @media (max-width:980px){.previewShell{position:relative; top:auto}}
+    .phone{
+      border-radius:30px;
+      padding:12px;
+      border:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      box-shadow: var(--shadow);
+    }
+    .screen{
+      border-radius:22px;
+      overflow:hidden;
+      height: 720px;
+      background: #fff;
+    }
+    @media (max-width:980px){.screen{height: 640px}}
+    .publicNav{
+      position:sticky;
+      top:0;
+      z-index:3;
+      height:64px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 16px;
+      backdrop-filter: blur(16px);
+      border-bottom:1px solid rgba(0,0,0,.08);
+    }
+    .publicNav .b{
+      font-family:var(--serif);
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+    .publicNav .b span{color: var(--gold)}
+    .publicBody{min-height:100%; padding-bottom:28px}
+    .heroBlock{
+      padding:32px 20px 24px;
+      text-align:center;
+      position:relative;
+    }
+    .heroBlock .av{
+      width:100px;height:100px;border-radius:999px;
+      margin:0 auto 16px;
+      overflow:hidden;
+      border:3px solid rgba(0,0,0,.08);
+      background: rgba(0,0,0,.05);
+      display:grid;place-items:center;
+      font-weight:900;
+      font-size:32px;
+    }
+    .heroBlock .av img{width:100%;height:100%;object-fit:cover}
+    .heroBlock .nm{font-weight:900; font-size:22px; letter-spacing:-.02em}
+    .heroBlock .hdln{font-size:14px; margin-top:6px}
+    .heroBlock .loc{font-size:13px; margin-top:8px; opacity:.85}
+    .section{
+      padding:16px 20px;
+      border-top:1px solid rgba(0,0,0,.08);
+    }
+    .section .st{
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-weight:800;
+      opacity:.65;
+      margin-bottom:12px;
+    }
+    .badgeRow{display:flex; flex-wrap:wrap; gap:10px}
+    .badge{
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      border:1px solid rgba(0,0,0,.08);
+      background: rgba(0,0,0,.04);
+    }
+    .svc{
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.08);
+      background: rgba(0,0,0,.03);
+      margin-bottom:12px;
+    }
+    .svc .t{font-weight:800; font-size:14px}
+    .svc .d{font-size:13px; opacity:.8; margin-top:5px; white-space:pre-wrap}
+    .cta{
+      margin:18px 20px 0;
+      padding:14px 16px;
+      border-radius:18px;
+      text-align:center;
+      font-weight:900;
+      letter-spacing:.02em;
+      color:#0a0a0a; /* Default to dark text for CTA */
+    }
+
+    /* Modal */
+    .modalOverlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      padding:18px;
+    }
+    .modalOverlay.active{display:flex}
+    .modal{
+      width:min(720px, 100%);
+      border-radius:18px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal .mhd{
+      padding:16px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--line);
+    }
+    .modal .mhd .mt{
+      font-family:var(--serif);
+      font-weight:800;
+      letter-spacing:-.01em;
+      font-size:18px;
+    }
+    .modal .mbd{padding:20px}
+    .x{
+      width:36px;height:36px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color:var(--muted);
+      cursor:pointer;
+      transition: var(--t);
+    }
+    .x:hover{border-color: rgba(201,169,110,.55); color:var(--text)}
+    .shareBox{
+      display:flex; gap:12px; align-items:stretch;
+      margin-top:12px;
+    }
+    .shareBox input{flex:1}
+    .shareTips{
+      margin-top:12px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      color:var(--muted); font-size:13px;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      border:1px solid var(--line);
+      padding:4px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.02);
+      color:var(--text);
+      font-size:13px;
+    }
+    .miniRow{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+    .seg{
+      display:flex;
+      border:1px solid var(--line);
+      border-radius:12px;
+      overflow:hidden;
+      background: rgba(255,255,255,.02);
+    }
+    .seg button{
+      border:none;
+      padding:10px 14px;
+      background:transparent;
+      color:var(--muted);
+      cursor:pointer;
+      transition: var(--t);
+      font-weight:700;
+      font-size:13px;
+    }
+    .seg button.active{
+      color:#0a0a0a;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+    }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      bottom:16px;
+      right:16px;
+      z-index:60;
+      width:min(420px, calc(100% - 32px));
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      pointer-events:none;
+    }
+    .toast .t{
+      pointer-events:auto;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(20,20,20,.96);
+      padding:14px;
+      box-shadow: var(--shadow2);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      animation: fadeIn .18s ease-out;
+    }
+    .toast .t .m{font-size:14px;color:var(--text)}
+    .toast .t.ok{border-color: rgba(34,197,94,.35)}
+    .toast .t.err{border-color: rgba(239,68,68,.35)}
+    .toast .t .mini{font-size:12px;color:var(--muted); margin-top:2px}
+
+    /* Chat Modal Specific Styles */
+    #visitorChatOverlay .modal, #chatOverlay .modal { /* Unified for both visitor and owner modal */
+        max-width: 600px;
+    }
+    .chatWindow { /* Shared style for message display areas */
+        height: 400px;
+        overflow-y: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--panel2);
+        display: flex;
+        flex-direction: column-reverse; /* Display new messages at bottom */
+        gap: 10px;
+    }
+    .chat-message {
+        display: flex;
+        flex-direction: column;
+        max-width: 80%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 14px;
+    }
+    .chat-message.visitor {
+        align-self: flex-start;
+        background: rgba(201,169,110,.1);
+        color: var(--text);
+    }
+    .chat-message.owner {
+        align-self: flex-end;
+        background: var(--gold);
+        color: #0a0a0a;
+    }
+    .chat-message .meta {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 4px;
+        text-align: right;
+    }
+    .chat-input-area {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .chat-input-area input {
+        flex-grow: 1;
+    }
+
+    /* Owner's Chat List */
+    .chat-list-owner {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 20px; /* Added spacing */
+    }
+    .chat-item-owner {
+        padding: 12px;
+        background: var(--panel2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: var(--t);
+    }
+    .chat-item-owner:hover {
+        border-color: var(--gold);
+        background: rgba(201,169,110,.05);
+    }
+    .chat-item-owner.active { /* Visual state for active conversation */
+        border-color: var(--gold);
+        background: rgba(201,169,110,.1);
+    }
+    .chat-item-owner.unread {
+        border-color: var(--gold);
+        background: rgba(201,169,110,.1);
+    }
+    .chat-item-owner .info {
+        display: flex;
+        flex-direction: column;
+    }
+    .chat-item-owner .info .name {
+        font-weight: 700;
+        color: var(--text);
+    }
+    .chat-item-owner .info .last-msg {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+    }
+    .chat-item-owner .unread-count {
+        background: var(--gold);
+        color: #0a0a0a;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar" id="topbar">
+    <a href="#/home" class="brand">
+      <div class="logo">Kat<span>Card</span></div>
+      <div class="tag" id="tagline">Premium Digital Identity</div>
+    </a>
+    <div class="top-actions" id="topActions"></div>
+  </div>
+
+  <div class="main">
+    <!-- HOME -->
+    <section class="page active" id="page-home">
+      <div class="container">
+        <div class="grid-2" style="margin-top:20px">
+          <div>
+            <h1 class="title">Your digital profile,<br/>built for premium first impressions.</h1>
+            <p class="lead">KatCard helps you create an elegant, NFC-ready profile with luxury templates, custom backgrounds, and simple posting—only what you add, nothing auto-generated.</p>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:24px">
+              <button class="btn primary" id="homeGetStarted">Get Started</button>
+              <button class="btn ghost" id="homeSignIn">Sign In</button>
+              <button class="btn link" id="homeAdmin">Admin</button>
+            </div>
+
+            <div class="kpi" style="margin-top:24px">
+              <div class="box"><div class="big">5</div><div class="lab">Premium Templates</div></div>
+              <div class="box"><div class="big">🔒</div><div class="lab">Activation Code Required</div></div>
+              <div class="box"><div class="big">⚡</div><div class="lab">NFC-ready Layout</div></div>
+            </div>
+
+            <div class="card" style="margin-top:24px">
+              <div class="hd"><h2>How it works</h2></div>
+              <div class="bd">
+                <ol style="margin:0; padding-left:20px; color:var(--muted); font-size:14px; line-height:1.8">
+                  <li>Create an account (email + password, Google placeholder)</li>
+                  <li>Enter an activation code from the admin</li>
+                  <li>Build your profile (only sections you add)</li>
+                  <li>Share via a link that works anywhere</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="hd"><h2>Quick Preview</h2></div>
+            <div class="bd">
+              <div class="phone">
+                <div class="screen" id="homePreview"></div>
+              </div>
+              <div class="subtle" style="margin-top:12px">This is a sample—your real preview updates inside your dashboard.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGIN -->
+    <section class="page" id="page-login">
+      <div class="auth-shell">
+        <div class="card auth-card">
+          <div class="auth-head">
+            <h1>Welcome back</h1>
+            <p>Sign in to your KatCard account</p>
+          </div>
+          <div class="bd">
+            <div id="loginMsg"></div>
+            <form id="loginForm">
+              <div class="field">
+                <label>Email</label>
+                <input class="input" id="loginEmail" type="email" autocomplete="username" placeholder="you@example.com" required />
+              </div>
+              <div class="field">
+                <label>Password</label>
+                <div class="pw-wrap">
+                  <input class="input" id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••" required />
+                  <button class="pw-toggle" type="button" id="loginToggle">Show</button>
+                </div>
+              </div>
+              <div class="opt-row">
+                <label class="check"><input type="checkbox" id="rememberEmail" /> Remember email</label>
+                <button type="button" class="btn link" id="forgotBtn">Forgot password?</button>
+              </div>
+              <button class="btn primary" style="width:100%" id="loginSubmit">
+                <span>Sign In</span>
+                <span class="spinner" id="loginSpin" style="display:none"></span>
+              </button>
+
+              <div class="divider">or continue with</div>
+              <button type="button" class="btn oauth" id="googleBtn" style="width:100%">
+                <span>🔍</span><span>Google</span>
+              </button>
+            </form>
+
+            <div class="auth-head" style="padding:20px 0 0; text-align:center">
+              <p style="margin:0; color:var(--muted); font-size:13px">
+                No account? <button class="btn link" type="button" id="toRegister">Create one</button>
+              </p>
+              <p style="margin:10px 0 0; color:var(--muted); font-size:13px">
+                <button class="btn link" type="button" id="toHomeFromLogin">Back to home</button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTER -->
+    <section class="page" id="page-register">
+      <div class="auth-shell">
+        <div class="card auth-card">
+          <div class="auth-head">
+            <h1>Create your account</h1>
+            <p>Activation code required to unlock KatCard</p>
+          </div>
+          <div class="bd">
+            <div id="regMsg"></div>
+            <form id="regForm">
+              <div class="row">
+                <div class="field">
+                  <label>First Name</label>
+                  <input class="input" id="regFirst" required placeholder="First name" />
+                </div>
+                <div class="field">
+                  <label>Last Name</label>
+                  <input class="input" id="regLast" required placeholder="Last name" />
+                </div>
+              </div>
+              <div class="field">
+                <label>Email</label>
+                <input class="input" id="regEmail" type="email" required placeholder="you@example.com" />
+              </div>
+              <div class="field">
+                <label>Password</label>
+                <div class="pw-wrap">
+                  <input class="input" id="regPass" type="password" required placeholder="Min 8 characters" />
+                  <button class="pw-toggle" type="button" id="regToggle">Show</button>
+                </div>
+                <div class="hint">Tip: use a strong password. (In a real app this is stored securely on a server.)</div>
+              </div>
+              <div class="msg info">
+                You will be asked for an activation code after registration. Only the admin can generate codes.
+              </div>
+              <button class="btn primary" style="width:100%" id="regSubmit">
+                <span>Create Account</span>
+                <span class="spinner" id="regSpin" style="display:none"></span>
+              </button>
+            </form>
+
+            <div class="auth-head" style="padding:20px 0 0; text-align:center">
+              <p style="margin:0; color:var(--muted); font-size:13px">
+                Already have an account? <button class="btn link" type="button" id="toLogin">Sign in</button>
+              </p>
+              <p style="margin:10px 0 0; color:var(--muted); font-size:13px">
+                <button class="btn link" type="button" id="toHomeFromRegister">Back to home</button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVATE -->
+    <section class="page" id="page-activate">
+      <div class="auth-shell">
+        <div class="card auth-card">
+          <div class="auth-head">
+            <h1>Activate your account</h1>
+            <p>Enter your unique access code</p>
+          </div>
+          <div class="bd">
+            <div id="actMsg"></div>
+            <form id="actForm">
+              <div class="field">
+                <label style="text-align:center">Access Code</label>
+                <div class="code-inputs" id="codeInputs"></div>
+                <div class="hint" style="text-align:center">6 characters • single-use</div>
+              </div>
+              <button class="btn primary" style="width:100%" id="actSubmit">
+                <span>Activate</span>
+                <span class="spinner" id="actSpin" style="display:none"></span>
+              </button>
+            </form>
+            <div class="auth-head" style="padding:20px 0 0; text-align:center">
+              <p style="margin:0; color:var(--muted); font-size:13px">
+                Need a code? Contact your admin.
+              </p>
+              <p style="margin:10px 0 0; color:var(--muted); font-size:13px">
+                <button class="btn link" type="button" id="actSignOut">Sign out</button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN LOGIN -->
+    <section class="page" id="page-admin-login">
+      <div class="auth-shell">
+        <div class="card auth-card">
+          <div class="auth-head">
+            <h1>Admin Access</h1>
+            <p>Restricted to authorized personnel</p>
+          </div>
+          <div class="bd">
+            <div id="adminLoginMsg"></div>
+            <form id="adminLoginForm">
+              <div class="field">
+                <label>Admin Email</label>
+                <input class="input" id="adminEmail" type="email" required placeholder="admin@example.com" />
+              </div>
+              <div class="field">
+                <label>Password</label>
+                <div class="pw-wrap">
+                  <input class="input" id="adminPass" type="password" required placeholder="••••••••" />
+                  <button class="pw-toggle" type="button" id="adminToggle">Show</button>
+                </div>
+              </div>
+              <button class="btn primary" style="width:100%" id="adminLoginSubmit">
+                <span>Access Admin</span>
+                <span class="spinner" id="adminSpin" style="display:none"></span>
+              </button>
+            </form>
+            <div class="auth-head" style="padding:20px 0 0; text-align:center">
+              <p style="margin:0; color:var(--muted); font-size:13px">
+                <button class="btn link" type="button" id="toHomeFromAdminLogin">Back to home</button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN DASH -->
+    <section class="page" id="page-admin">
+      <div class="container">
+        <div class="dash">
+          <div class="side">
+            <div class="card">
+              <div class="hd">
+                <h2>Admin</h2>
+                <button class="btn ghost btn-sm" id="adminSignOut">Sign Out</button>
+              </div>
+              <div class="bd">
+                <div class="pill" id="adminPill">—</div>
+                <div class="kpi">
+                  <div class="box"><div class="big" id="kCodes">0</div><div class="lab">Codes</div></div>
+                  <div class="box"><div class="big" id="kUsed">0</div><div class="lab">Used</div></div>
+                  <div class="box"><div class="big" id="kUsers">0</div><div class="lab">Users</div></div>
+                </div>
+                <div style="margin-top:20px; display:grid; gap:12px">
+                  <button class="btn primary" id="genCodeBtn">Generate Code</button>
+                  <button class="btn ghost" id="genAssignedBtn">Generate & Assign</button>
+                </div>
+                <div class="hint" style="margin-top:12px">
+                  Codes are single-use and unguessable (cryptographically random).
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="hd">
+                <h2>Activation Codes</h2>
+                <div class="miniRow">
+                  <div class="seg" id="codeFilterSeg">
+                    <button type="button" data-filter="all" class="active">All</button>
+                    <button type="button" data-filter="available">Available</button>
+                    <button type="button" data-filter="used">Used</button>
+                  </div>
+                </div>
+              </div>
+              <div class="bd">
+                <div id="codesList" class="code-list" style="gap:12px;"></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:20px;">
+              <div class="hd"><h2>Users</h2></div>
+              <div class="bd" id="usersList" style="gap:12px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- USER DASH -->
+    <section class="page" id="page-dashboard">
+      <div class="container">
+        <div class="dash">
+          <div class="side">
+            <div class="card">
+              <div class="hd">
+                <h2>Dashboard</h2>
+                <button class="btn ghost btn-sm" id="userSignOut">Sign Out</button>
+              </div>
+              <div class="bd">
+                <div class="pill" id="userPill">—</div>
+                <div style="display:grid; gap:10px; margin-top:16px" class="navbox">
+                  <button class="btn navitem active" data-go="dashboard">👤 Edit Profile</button>
+                  <button class="btn navitem" data-go="appearance">🎨 Change Template</button>
+                  <button class="btn navitem" data-go="posts">📝 Create Post</button>
+                  <button class="btn navitem" data-go="settings">🔗 Copy Profile Link</button>
+                  <button class="btn navitem" data-go="chat">💬 Chat</button> <!-- NEW Chat Nav Item -->
+                </div>
+                <div class="kpi" style="margin-top:16px;">
+                  <div class="box"><div class="big" id="kSections">0</div><div class="lab">Sections</div></div>
+                  <div class="box"><div class="big" id="kPosts">0</div><div class="lab">Posts</div></div>
+                  <div class="box"><div class="big" id="kTemplate">—</div><div class="lab">Template</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="grid-template-columns: 1.2fr .8fr; gap:24px;">
+            <div>
+              <div class="card">
+                <div class="hd">
+                  <h2>Profile</h2>
+                  <div class="miniRow">
+                    <button class="btn ghost btn-sm" id="shareBtn">Copy Profile Link</button>
+                    <button class="btn primary btn-sm" id="shareModalBtn">Share</button>
+                  </div>
+                </div>
+                <div class="bd">
+                  <div class="row">
+                    <div class="field">
+                      <label>First Name</label>
+                      <input class="input" id="pFirst" placeholder="First name" />
+                    </div>
+                    <div class="field">
+                      <label>Last Name</label>
+                      <input class="input" id="pLast" placeholder="Last name" />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Headline</label>
+                    <input class="input" id="pHeadline" placeholder="e.g., Founder • Designer • Consultant" />
+                  </div>
+                  <div class="row">
+                    <div class="field">
+                      <label>Location</label>
+                      <input class="input" id="pLocation" placeholder="e.g., New York, NY" />
+                    </div>
+                    <div class="field">
+                      <label>Contact Email</label>
+                      <input class="input" id="pContact" placeholder="hello@example.com" />
+                    </div>
+                  </div>
+                  <!-- New field for custom chat ID -->
+                  <div class="field">
+                    <label>Chat ID</label>
+                    <input class="input" id="pChatLink" placeholder="e.g., unique-chat-id (to enable in-website chat)" />
+                    <div class="hint">Visitors can use this to contact you directly via in-website chat.</div>
+                  </div>
+
+                  <div class="field">
+                    <label>About</label>
+                    <textarea id="pBio" placeholder="Write your bio..."></textarea>
+                    <div class="hint">Only shows if you add it.</div>
+                  </div>
+
+                  <div class="card" style="margin-top:20px;">
+                    <div class="hd">
+                      <h2>Photos</h2>
+                      <div class="miniRow">
+                        <button class="btn ghost btn-sm" id="clearImages">Clear</button>
+                      </div>
+                    </div>
+                    <div class="bd">
+                      <div class="img-row">
+                        <div>
+                          <div class="subtle" style="margin-bottom:10px">Profile image</div>
+                          <div class="avatar" id="avatarPick">
+                            <span style="color:var(--gold); font-weight:900;">+</span>
+                          </div>
+                          <input type="file" accept="image/*" id="avatarFile" style="display:none">
+                        </div>
+                        <div style="flex:1; min-width:240px">
+                          <div class="subtle" style="margin-bottom:10px">Background image</div>
+                          <div class="cover" id="coverPick">
+                            <span style="color:var(--muted)">Upload background</span>
+                          </div>
+                          <input type="file" accept="image/*" id="coverFile" style="display:none">
+                        </div>
+                      </div>
+                      <div class="subtle" style="margin:16px 0 10px">Or select a preset luxury background</div>
+                      <div class="presets" id="presetGrid"></div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="margin-top:20px;">
+                    <div class="hd">
+                      <h2>Skills</h2>
+                      <button class="btn ghost btn-sm" id="addSkillBtn">Add</button>
+                    </div>
+                    <div class="bd">
+                      <div id="skillAddRow" style="display:none">
+                        <div class="row">
+                          <div class="field" style="margin-bottom:10px">
+                            <label>New skill</label>
+                            <input class="input" id="skillInput" placeholder="Type a skill and press Enter" />
+                            <div class="hint">Only shows if you add it.</div>
+                          </div>
+                          <div style="display:flex; align-items:flex-end; gap:10px; padding-bottom:10px">
+                            <button class="btn primary" id="skillSaveBtn" type="button">Add</button>
+                            <button class="btn ghost" id="skillCancelBtn" type="button">Cancel</button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="chip-row" id="skillsRow"></div>
+                      <div class="subtle" id="skillsEmpty">No skills added.</div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="margin-top:20px;">
+                    <div class="hd">
+                      <h2>Services</h2>
+                      <button class="btn ghost btn-sm" id="addServiceBtn">Add</button>
+                    </div>
+                    <div class="bd">
+                      <div id="serviceForm" style="display:none">
+                        <div class="field">
+                          <label>Service name</label>
+                          <input class="input" id="svcTitle" placeholder="e.g., Brand Strategy" />
+                        </div>
+                        <div class="field">
+                          <label>Description</label>
+                          <textarea id="svcDesc" placeholder="Short description..."></textarea>
+                        </div>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap">
+                          <button class="btn primary" id="svcSave" type="button">Save</button>
+                          <button class="btn ghost" id="svcCancel" type="button">Cancel</button>
+                        </div>
+                        <div style="height:12px"></div>
+                      </div>
+                      <div id="servicesList" style="gap:12px; display:grid;"></div>
+                      <div class="subtle" id="servicesEmpty">No services added.</div>
+                    </div>
+                  </div>
+
+                  <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:20px">
+                    <button class="btn primary" id="saveProfile">Save Profile</button>
+                    <button class="btn ghost" id="openShare">Share</button>
+                    <button class="btn ghost" id="openPublicHere">Preview Public</button>
+                  </div>
+                  <div class="hint" style="margin-top:12px">Nothing is auto-created. Empty sections won’t render.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="previewShell">
+              <div class="card">
+                <div class="hd">
+                  <h2>Live Preview</h2>
+                  <button class="btn ghost btn-sm" id="refreshPreview">Refresh</button>
+                </div>
+                <div class="bd">
+                  <div class="phone">
+                    <div class="screen" id="livePreview"></div>
+                  </div>
+                  <div class="subtle" style="margin-top:12px">Mobile-first preview for NFC sharing.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- POSTS -->
+    <section class="page" id="page-posts">
+      <div class="container">
+        <div class="dash">
+          <div class="side">
+            <div class="card">
+              <div class="hd"><h2>Posts</h2><button class="btn ghost btn-sm" id="postsBack">Back</button></div>
+              <div class="bd">
+                <div class="pill" id="postsPill">—</div>
+                <div class="hint" style="margin-top:12px">Posts are never auto-generated. Only what you create appears.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="create-post" id="createPostBtn">
+              <div class="left">
+                <div class="plus">+</div>
+                <div>
+                  <div style="font-weight:900">Create Post</div>
+                  <div class="subtle">Text + optional image</div>
+                </div>
+              </div>
+              <button class="btn primary">New Post</button>
+            </div>
+
+            <div id="postsList" class="posts"></div>
+            <div id="postsEmpty" class="card" style="display:none">
+              <div class="bd" style="text-align:center; padding:32px 20px">
+                <div class="empty-icon" style="margin:0 auto 12px">📝</div>
+                <div style="font-weight:900; font-size:16px">No posts yet</div>
+                <div class="subtle">Click “Create Post” to publish your first update.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPEARANCE -->
+    <section class="page" id="page-appearance">
+      <div class="container">
+        <div class="dash">
+          <div class="side">
+            <div class="card">
+              <div class="hd"><h2>Appearance</h2><button class="btn ghost btn-sm" id="appearanceBack">Back</button></div>
+              <div class="bd">
+                <div class="pill" id="appearancePill">—</div>
+                <div class="hint" style="margin-top:12px">Switch templates anytime. Minimal, elegant, and NFC-friendly.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="hd"><h2>Templates</h2></div>
+              <div class="bd">
+                <div class="template-list" id="templateList"></div>
+              </div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+              <div class="hd"><h2>Accent Color</h2></div>
+              <div class="bd">
+                <div class="color-row" id="accentRow"></div>
+                <div class="hint" style="margin-top:12px">Gold is classic. You can choose another accent if you want.</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:20px;">
+              <button class="btn primary" id="appearanceSave">Save</button>
+              <button class="btn ghost" id="appearancePreview">Preview Public</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAT (OWNER VIEW) -->
+    <section class="page" id="page-chat">
+      <div class="container">
+        <div class="dash">
+          <div class="side">
+            <div class="card">
+              <div class="hd">
+                <h2>Chat</h2>
+                <button class="btn ghost btn-sm" id="chatBack">Back</button>
+              </div>
+              <div class="bd">
+                <div class="pill" id="chatPill">—</div>
+                <div class="hint" style="margin-top:12px">Manage conversations with visitors.</div>
+                <div class="msg info" style="margin-top: 16px;">
+                  Chat history is stored locally in your browser (localStorage). It is NOT synced to a cloud or other devices.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="hd">
+                <h2>Conversations</h2>
+                <span id="currentChatVisitorName" class="subtle" style="display:none;"></span>
+              </div>
+              <div class="bd" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                <div id="conversationsList" class="chat-list-owner">
+                  <!-- List of visitors who messaged -->
+                </div>
+                <!-- Chat Window for owner -->
+                <div id="ownerChatWindow" style="display:none; flex-direction: column;">
+                  <div id="ownerChatMessages" class="chatWindow">
+                    <!-- Messages will load here -->
+                  </div>
+                  <div class="chat-input-area">
+                    <input type="text" class="input" id="ownerChatMessageInput" placeholder="Type a message..." />
+                    <button class="btn primary" id="ownerChatSend">Send</button>
+                  </div>
+                </div>
+                <div id="noChatsMessage" class="subtle" style="text-align:center; padding: 20px;">No active conversations.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="page" id="page-settings">
+      <div class="container">
+        <div class="dash">
+          <div class="side">
+            <div class="card">
+              <div class="hd"><h2>Settings</h2><button class="btn ghost btn-sm" id="settingsBack">Back</button></div>
+              <div class="bd">
+                <div class="pill" id="settingsPill">—</div>
+                <div class="hint" style="margin-top:12px">Copy your public profile link or share it.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="hd"><h2>Profile Link</h2></div>
+              <div class="bd">
+                <div class="field" style="margin-bottom:12px">
+                  <label>Shareable link</label>
+                  <input class="input" id="settingsLink" readonly />
+                  <div class="hint">This link works anywhere (it embeds your profile data in the URL).</div>
+                </div>
+                <div style="display:flex; gap:12px; flex-wrap:wrap">
+                  <button class="btn primary" id="settingsCopy">Copy Profile Link</button>
+                  <button class="btn ghost" id="settingsShare">Open Share</button>
+                  <button class="btn ghost" id="settingsTest">Test Link</button>
+                </div>
+                <div class="msg info" style="margin-top:16px">
+                  Best practice: keep images optional in the link (shorter). You can enable “Include images” in Share if needed.
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:20px;">
+              <div class="hd"><h2>Account</h2></div>
+              <div class="bd">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap">
+                  <div>
+                    <div style="font-weight:900">Sign Out</div>
+                    <div class="subtle">End your current session</div>
+                  </div>
+                  <button class="btn ghost" id="settingsSignOut">Sign Out</button>
+                </div>
+                <div style="height:1px; background:var(--line); margin:16px 0;"></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap">
+                  <div>
+                    <div style="font-weight:900; color:#fecaca">Delete Account (demo)</div>
+                    <div class="subtle">Removes your account from this session only.</div>
+                  </div>
+                  <button class="btn danger" id="settingsDelete">Delete</button>
+                </div>
+                <div class="hint" style="margin-top:12px">Note: this is a client-only demo. Real KatCard uses secure server storage.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PUBLIC VIEW -->
+    <section class="page" id="page-public" style="padding:0">
+      <div id="publicMount"></div>
+    </section>
+  </div>
+
+  <!-- SHARE MODAL -->
+  <div class="modalOverlay" id="shareOverlay" role="dialog" aria-modal="true" aria-label="Share profile">
+    <div class="modal">
+      <div class="mhd">
+        <div>
+          <div class="mt">Share your KatCard profile</div>
+          <div class="subtle" id="shareSub">Copy a link that works on any device.</div>
+        </div>
+        <button class="x" id="shareClose" aria-label="Close">×</button>
+      </div>
+      <div class="mbd">
+        <div class="card" style="margin:0">
+          <div class="hd"><h2>Link</h2></div>
+          <div class="bd">
+            <div class="miniRow" style="justify-content:space-between">
+              <div class="check"><input type="checkbox" id="shareIncludeImages" /> Include images (may be a long link)</div>
+              <div class="pill" id="shareLen">—</div>
+            </div>
+
+            <div class="shareBox">
+              <input class="input" id="shareLink" readonly />
+              <button class="btn primary" id="shareCopy">Copy</button>
+              <button class="btn ghost" id="shareOpen">Open</button>
+            </div>
+
+            <div class="shareTips">
+              <div>Clipboard may be blocked in some iframes—if so, click the field and press <span class="kbd">Ctrl</span> + <span class="kbd">C</span>.</div>
+              <button class="btn link" id="shareRegen" type="button">Regenerate</button>
+            </div>
+
+            <div class="divider">quick share</div>
+            <div style="display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px">
+              <button class="btn ghost" id="shareTw">🐦 Twitter</button>
+              <button class="btn ghost" id="shareLi">💼 LinkedIn</button>
+              <button class="btn ghost" id="shareWa">💬 WhatsApp</button>
+              <button class="btn ghost" id="shareEm">✉️ Email</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="msg info" style="margin-top:20px">
+          This share link embeds your profile data in the URL (no server needed). Great for demos and NFC sharing.
+          <div id="shareLinkLengthWarning" class="msg err" style="margin-top:12px; display:none;">
+            Warning: This link is very long. It may break when shared on some platforms. Consider unchecking "Include images".
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST MODAL -->
+  <div class="modalOverlay" id="postOverlay" role="dialog" aria-modal="true" aria-label="Create post">
+    <div class="modal" style="width:min(720px, 100%)">
+      <div class="mhd">
+        <div class="mt">Create Post</div>
+        <button class="x" id="postClose" aria-label="Close">×</button>
+      </div>
+      <div class="mbd">
+        <div id="postMsg"></div>
+        <div class="field">
+          <label>Text</label>
+          <textarea id="postText" placeholder="What's on your mind?"></textarea>
+        </div>
+        <div class="field">
+          <label>Optional image</label>
+          <div class="row">
+            <div>
+              <button class="btn ghost" id="postPickImg" type="button">📷 Add Image</button>
+              <button class="btn link" id="postClearImg" type="button" style="display:none">Remove</button>
+              <input type="file" accept="image/*" id="postImgFile" style="display:none">
+              <div class="hint" style="margin-top:10px">Keep images small if you want to include them in share links.</div>
+            </div>
+            <div>
+              <div class="cover" id="postImgPreview" style="height:140px; display:none">
+                <img id="postImgPreviewImg" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; justify-content:flex-end; flex-wrap:wrap">
+          <button class="btn ghost" id="postCancel" type="button">Cancel</button>
+          <button class="btn primary" id="postPublish" type="button">Publish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT MODAL (VISITOR VIEW) -->
+  <div class="modalOverlay" id="visitorChatOverlay" role="dialog" aria-modal="true" aria-label="Chat with profile owner">
+    <div class="modal" id="chatModal">
+      <div class="mhd">
+        <div class="mt" id="visitorChatTitle">Chat with [Owner Name]</div>
+        <button class="x" id="visitorChatClose" aria-label="Close">×</button>
+      </div>
+      <div class="mbd">
+        <div id="chatMessages" class="chatWindow">
+          <!-- Visitor messages will load here -->
+        </div>
+        <div class="chat-input-area">
+          <input type="text" class="input" id="visitorChatMessageInput" placeholder="Type your message..." />
+          <button class="btn primary" id="visitorChatSend">Send</button>
+        </div>
+        <div class="msg info" style="margin-top: 20px;">
+          Chat history is stored locally in your browser (localStorage). It is NOT synced to a cloud or other devices.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9tWJMGRj3j9E4bFnJJTlrDY2XS-TzpTg",
+    authDomain: "katcard-5b615.firebaseapp.com",
+    projectId: "katcard-5b615",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.setDoc = setDoc;
+  window.getDoc = getDoc;
+  window.doc = doc;
+</script>
+
+<script>
+(() => {
+  /***********************
+   *  NOTES (important)
+   *  - Client-only demo: no backend.
+   *  - Persistence is LOCALSTORAGE ONLY. Data WILL NOT persist across different devices.
+   *    To achieve true cross-device data persistence and real-time chat, a server-side backend (e.g., Firebase, AWS, custom API) is REQUIRED.
+   *    This is an inherent limitation of a single HTML file application.
+   *  - Images are stored as Base64 directly within the profile/post objects in localStorage.
+   *    When sharing, this Base64 data is embedded directly into the URL hash.
+   *    This makes URLs VERY LONG and may break on some platforms. Also, Open Graph (OG) social media
+   *    previews CANNOT be dynamic from client-side JS. OG image/metadata will be generic.
+   ************************/
+
+  // Hardcoded admin credentials (client-side demo; not secure in production)
+  const ADMIN_EMAIL = "pyaephyo153007@gmail.com";
+  const ADMIN_PASS  = "2468Atd2@#";
+
+  // App state
+  const state = {
+    session: null, // {userId, role}
+    users: [],     // {id, email, pass, first, last, role, activated, createdAt}
+    profiles: {},  // by userId: {slug, first, last, headline, location, contact, bio, skills[], services[], template, accent, avatar: Base64, cover: Base64, presetBgKey?, chatLink?}
+    posts: {},     // by userId: [{id, createdAt, text, image: Base64?}]
+    codes: [],     // {code, createdAt, used, usedBy, usedAt, assignedEmail?}
+    messages: {},  // {profileOwnerId: {visitorSessionId: [{id, from, text, timestamp, readOwner, readVisitor}]}} - LocalStorage only
+    codeFilter: "all",
+    currentChat: {
+        profileOwnerId: null,
+        visitorSessionId: null
+    },
+    // Track the last state of "Include Images" for share modal
+    shareLast: { includeImages: false }
+  };
+
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+  const now = () => Date.now();
+  const fmtDate = (ts) => new Date(ts).toLocaleString(undefined, {year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit"});
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+  function toast(message, type="ok", detail="") {
+    const host = $("#toast");
+    const el = document.createElement("div");
+    el.className = "t " + (type === "err" ? "err" : "ok");
+    el.innerHTML = `
+      <div>
+        <div class="m">${escapeHtml(message)}</div>
+        ${detail ? `<div class="mini">${escapeHtml(detail)}</div>` : ""}
+      </div>
+      <button class="x" style="width:30px;height:30px;border-radius:12px">×</button>
+    `;
+    host.appendChild(el);
+    const kill = () => { el.remove(); };
+    el.querySelector("button").addEventListener("click", kill);
+    setTimeout(kill, 3600);
+  }
+
+  async function saveProfileToCloud(userId, profile) {
+  try {
+    if (!window.db) return;
+    await setDoc(doc(db, "profiles", userId), profile);
+    console.log("✅ Saved to Firebase");
+    } catch (e) {
+      console.error("❌ Firebase save error:", e);
+    }
+  }
+
+  async function loadProfileFromCloud(userId) {
+  try {
+    if (!window.db) return null;
+    const snap = await getDoc(doc(db, "profiles", userId));
+    if (snap.exists()) {
+      console.log("✅ Loaded from Firebase");
+      return snap.data();
+    }
+    return null;
+  } catch (e) {
+    console.error("❌ Firebase load error:", e);
+    return null;
+  }
+}
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  }
+
+  function uid(prefix="u") {
+    return prefix + "_" + Math.random().toString(36).slice(2, 10) + "_" + Date.now().toString(36);
+  }
+
+  function secureCode(len=6) {
+    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const bytes = new Uint8Array(len);
+    crypto.getRandomValues(bytes);
+    let out = "";
+    for (let i=0;i<len;i++) out += alphabet[bytes[i] % alphabet.length];
+    return out;
+  }
+
+  function uniqueCode() {
+    let c = secureCode(6);
+    const exists = new Set(state.codes.map(x => x.code));
+    while (exists.has(c)) c = secureCode(6);
+    return c;
+  }
+
+  function slugify(s){
+    return (s || "").toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "profile";
+  }
+
+  // --- Persistence ---
+  function loadState() {
+    try {
+      state.users = JSON.parse(localStorage.getItem("katcard_users") || "[]");
+      state.profiles = JSON.parse(localStorage.getItem("katcard_profiles") || "{}");
+      state.posts = JSON.parse(localStorage.getItem("katcard_posts") || "{}");
+      state.codes = JSON.parse(localStorage.getItem("katcard_codes") || "[]");
+      state.messages = JSON.parse(localStorage.getItem("katcard_messages") || "{}"); // Load messages
+      state.session = JSON.parse(localStorage.getItem("katcard_session") || "null");
+    } catch (e) {
+      console.error("Failed to load state from localStorage:", e);
+      // Fallback to initial state if localStorage is corrupted
+      state.users = [];
+      state.profiles = {};
+      state.posts = {};
+      state.codes = [];
+      state.messages = {};
+      state.session = null;
+    }
+  }
+
+  function saveState(key = null) {
+    if (key) {
+      localStorage.setItem(`katcard_${key}`, JSON.stringify(state[key]));
+    } else {
+      localStorage.setItem("katcard_users", JSON.stringify(state.users));
+      localStorage.setItem("katcard_profiles", JSON.stringify(state.profiles));
+      localStorage.setItem("katcard_posts", JSON.stringify(state.posts));
+      localStorage.setItem("katcard_codes", JSON.stringify(state.codes));
+      localStorage.setItem("katcard_messages", JSON.stringify(state.messages)); // Save messages
+      localStorage.setItem("katcard_session", JSON.stringify(state.session));
+    }
+  }
+
+  // --- Chat Functions ---
+  // Store visitor session ID in localStorage for persistence across tabs/sessions on same device
+  function getVisitorSessionId(profileOwnerId) {
+      let visitorId = localStorage.getItem(`katcard_visitor_id_for_${profileOwnerId}`);
+      if (!visitorId) {
+          visitorId = uid("visitor");
+          localStorage.setItem(`katcard_visitor_id_for_${profileOwnerId}`, visitorId);
+      }
+      return visitorId;
+  }
+
+  function getConversation(profileOwnerId, visitorSessionId) {
+      if (!state.messages[profileOwnerId]) {
+          state.messages[profileOwnerId] = {};
+      }
+      if (!state.messages[profileOwnerId][visitorSessionId]) {
+          state.messages[profileOwnerId][visitorSessionId] = [];
+      }
+      return state.messages[profileOwnerId][visitorSessionId];
+  }
+
+  function addMessage(profileOwnerId, visitorSessionId, from, text) {
+      const conversation = getConversation(profileOwnerId, visitorSessionId);
+      conversation.push({
+          id: uid("msg"),
+          from, // 'visitor' or 'owner'
+          text,
+          timestamp: now(),
+          readOwner: from === 'owner', // Owner reads their own messages by default
+          readVisitor: from === 'visitor' // Visitor reads their own messages by default
+      });
+      saveState("messages");
+      // Trigger update for other tabs on the same device
+      // This is a browser StorageEvent, it doesn't work across different machines/browsers
+      window.dispatchEvent(new Event('storage')); 
+  }
+  // --- End Chat Functions ---
+
+  function ensureAdmin() {
+    const found = state.users.find(u => u.role === "admin");
+    if (found) return;
+    const id = uid("admin");
+    state.users.push({
+      id, email: ADMIN_EMAIL, pass: ADMIN_PASS,
+      first: "Admin", last: "User",
+      role: "admin", activated: true, createdAt: now()
+    });
+    saveState("users");
+  }
+
+  function ensureDemoCodes() {
+    if (state.codes.length) return; // Only add if no codes exist
+    // create a couple of starter codes
+    for (let i=0;i<3;i++){
+      state.codes.push({code: uniqueCode(), createdAt: now(), used:false, usedBy:null, usedAt:null, assignedEmail:null});
+    }
+    saveState("codes");
+  }
+
+  function ensureProfile(userId) {
+    if (state.profiles[userId]) return state.profiles[userId];
+    const u = state.users.find(x => x.id === userId);
+    const baseSlug = slugify(`${u?.first||"user"}-${u?.last||""}`);
+    let slug = baseSlug;
+    const used = new Set(Object.values(state.profiles).map(p => p.slug));
+    let i = 2;
+    while (used.has(slug)) { slug = `${baseSlug}-${i++}`; }
+    state.profiles[userId] = {
+      slug,
+      first: u?.first || "",
+      last: u?.last || "",
+      headline: "",
+      location: "",
+      contact: u?.email || "",
+      chatLink: "", // This will now store the chat ID, not a generic contact link
+      bio: "",
+      skills: [],
+      services: [],
+      template: "minimal-luxury",
+      accent: "#c9a96e",
+      avatar: null, // Stores Base64 string directly in profile object
+      cover: null,  // Stores Base64 string directly in profile object
+      presetBg: "onyx"
+    };
+    saveState("profiles");
+    return state.profiles[userId];
+  }
+
+  function ensurePosts(userId){
+    if (!state.posts[userId]) {
+      state.posts[userId] = [];
+      saveState("posts");
+    }
+    return state.posts[userId];
+  }
+
+  // URL encoding helpers (works cross-device)
+  function b64urlEncodeUnicode(str){
+    const bytes = new TextEncoder().encode(str);
+    let bin = "";
+    bytes.forEach(b => bin += String.fromCharCode(b));
+    return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  }
+  function b64urlDecodeUnicode(b64){
+    const norm = b64.replace(/-/g,"+").replace(/_/g,"/");
+    const pad = norm + "===".slice((norm.length + 3) % 4);
+    const bin = atob(pad);
+    const bytes = new Uint8Array(bin.length);
+    for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function makeSharePayload(profile, posts, includeImages=false){
+    // Minify keys to keep URL shorter
+    const d = {};
+    const set = (k, v) => {
+      if (v === undefined || v === null || (typeof v === "string" && v.trim() === "")) return;
+      if (Array.isArray(v) && v.length === 0) return;
+      d[k] = v;
+    };
+
+    set("oid", profile.profileOwnerId || null); // Ensure owner ID is in payload for chat
+    set("fn", profile.first);
+    set("ln", profile.last);
+    set("hl", profile.headline);
+    set("lc", profile.location);
+    set("em", profile.contact);
+    set("cl", profile.chatLink); // Ensure chatLink is in share payload
+    set("bio", profile.bio);
+    set("sk", profile.skills?.slice(0, 30));
+    set("sv", profile.services?.slice(0, 12).map(s => ({t:s.title, d:s.desc})));
+    set("tpl", profile.template);
+    set("ac", profile.accent);
+    set("bg", profile.presetBg || "onyx");
+
+    if (includeImages){
+      // Embed full Base64 data if images are included to make them visible when shared
+      set("av", profile.avatar);
+      set("cv", profile.cover);
+    }
+
+    // posts: last 10, images optional (Base64 data)
+    const p = (posts || []).slice(0, 10).map(x => ({
+      t: x.text || "",
+      at: x.createdAt || now(),
+      im: includeImages ? (x.image || null) : null // Embed Base64 data
+    })).filter(x => x.t.trim() || x.im);
+
+    set("ps", p);
+
+    return d;
+  }
+
+  function shareLinkForCurrent(includeImages=false){
+    const u = requireUser();
+    const profile = ensureProfile(u.id);
+    // Add current user's ID to profile data to enable chat for visitors
+    const profileWithId = { ...profile, profileOwnerId: u.id };
+    const posts = ensurePosts(u.id);
+    const payload = makeSharePayload(profileWithId, posts, includeImages);
+
+    const json = JSON.stringify(payload);
+    const encoded = b64urlEncodeUnicode(json);
+    const base = location.href.split("#")[0];
+    const url = `${base}#v=${encoded}`;
+    return { url, encoded, bytes: encoded.length, payload };
+  }
+
+  function parsePublicFromHash(){
+    const h = location.hash || "";
+    if (!h.startsWith("#v=")) return null;
+    const enc = h.slice(3);
+    try{
+      const json = b64urlDecodeUnicode(enc);
+      const data = JSON.parse(json);
+      return data;
+    } catch(e){
+      console.error("Error parsing public profile from hash:", e);
+      return { __error: "Invalid or corrupted share link." };
+    }
+  }
+
+  // Templates: public preview styles
+  const TEMPLATE_META = [
+    { id:"minimal-luxury", name:"Minimal Luxury", desc:"Clean, timeless, effortlessly elegant" },
+    { id:"modern-executive", name:"Modern Executive", desc:"Confident, bold, high-contrast" },
+    { id:"creative-gold", name:"Creative Gold", desc:"Artful feel with refined highlights" },
+    { id:"dark-elite", name:"Dark Elite", desc:"Elite black-on-black sophistication" },
+    { id:"soft-professional", name:"Soft Professional", desc:"Warm, clean, approachable luxury" },
+    // NEW TEMPLATES (3)
+    { id:"earthy-serenity", name:"Earthy Serenity", desc:"Organic, calming tones with soft accents" },
+    { id:"vibrant-pro", name:"Vibrant Professional", desc:"Energetic and modern with a clean design" },
+    { id:"classic-noir", name:"Timeless and sophisticated with deep, rich colors" }
+  ];
+
+  const PRESET_BGS = [
+    { id:"onyx", name:"Onyx Fade", css:"linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 55%, #0a0a0a 100%)" },
+    { id:"champagne", name:"Champagne", css:"linear-gradient(135deg, #241f17 0%, #0f0f0f 60%, #1a1610 100%)" },
+    { id:"noir", name:"Noir", css:"linear-gradient(135deg, #111111 0%, #0a0a0a 100%)" },
+    { id:"slate", name:"Slate", css:"linear-gradient(135deg, #0b1220 0%, #0a0a0a 65%, #111827 100%)" },
+    { id:"smoke", name:"Smoke", css:"linear-gradient(135deg, #1c1917 0%, #0a0a0a 70%, #262626 100%)" }
+  ];
+
+  function templateColors(tpl, accent){
+    const a = accent || "#c9a96e";
+    switch(tpl){
+      case "modern-executive":
+        return { bg:"#0b0b0b", fg:"#fafaf9", muted:"#a8a29e", card:"rgba(255,255,255,.06)", line:"rgba(255,255,255,.10)", accent:a, navBg:"rgba(11,11,11,.7)" };
+      case "creative-gold":
+        return { bg:"#0a0a0a", fg:"#fafaf9", muted:"#cfc7b5", card:"rgba(201,169,110,.10)", line:"rgba(201,169,110,.18)", accent:a, navBg:"rgba(10,10,10,.65)" };
+      case "dark-elite":
+        return { bg:"#070707", fg:"#f5f5f5", muted:"#b3b3b3", card:"rgba(255,255,255,.05)", line:"rgba(255,255,255,.10)", accent:a, navBg:"rgba(7,7,7,.72)" };
+      case "soft-professional":
+        return { bg:"#fbfaf8", fg:"#141414", muted:"#6b6b6b", card:"#ffffff", line:"#ebe7df", accent:a, navBg:"rgba(251,250,248,.78)" };
+      case "earthy-serenity":
+        return { bg:"#fcf8f3", fg:"#3a342a", muted:"#8c8272", card:"#ffffff", line:"#e6e0d9", accent:"#88b04b", navBg:"rgba(252,248,243,.75)" };
+      case "vibrant-pro":
+        return { bg:"#f0f2f5", fg:"#2c3e50", muted:"#7f8c8d", card:"#ffffff", line:"#dce0e6", accent:"#2980b9", navBg:"rgba(240,242,245,.75)" };
+      case "classic-noir":
+        return { bg:"#1a1a1a", fg:"#e0e0e0", muted:"#9e9e9e", card:"#2c2c2c", line:"#3a3a3a", accent:"#c0392b", navBg:"rgba(26,26,26,.78)" };
+      case "minimal-luxury":
+      default:
+        return { bg:"#fafaf9", fg:"#1c1917", muted:"#78716c", card:"#ffffff", line:"#e7e5e4", accent:a, navBg:"rgba(250,250,249,.75)" };
+    }
+  }
+
+  function renderPublic(data, mount, forPreview = false){
+    const err = data?.__error;
+    if (err){
+      mount.innerHTML = `
+        <div style="min-height:100%; display:grid; place-items:center; padding:24px; background: var(--bg); color: var(--text);">
+          <div class="card" style="max-width:520px; width:100%">
+            <div class="hd"><h2>Share Link Error</h2></div>
+            <div class="bd">
+              <div class="msg err">${escapeHtml(err)}</div>
+              <button class="btn primary" id="goHomeFromPublic">Go to KatCard</button>
+            </div>
+          </div>
+        </div>
+      `;
+      $("#goHomeFromPublic")?.addEventListener("click", () => go("#/home"));
+      return;
+    }
+
+    const profile = {
+      profileOwnerId: data.oid || null,
+      first: data.fn || "",
+      last: data.ln || "",
+      headline: data.hl || "",
+      location: data.lc || "",
+      contact: data.em || "",
+      chatLink: data.cl || "",
+      bio: data.bio || "",
+      skills: data.sk || [],
+      services: (data.sv || []).map(x => ({title:x.t || "", desc:x.d || ""})),
+      template: data.tpl || "minimal-luxury",
+      accent: data.ac || "#c9a96e",
+      avatar: data.av || null, // Directly Base64 data
+      cover: data.cv || null,  // Directly Base64 data
+      presetBg: data.bg || "onyx",
+    };
+    const posts = (data.ps || []).map(p => ({text:p.t || "", createdAt:p.at || now(), image:p.im || null})); // Base64 image data for posts
+
+    const C = templateColors(profile.template, profile.accent);
+    const preset = PRESET_BGS.find(x => x.id === profile.presetBg) || PRESET_BGS[0];
+
+    const initials = ((profile.first || " ")[0] || "").toUpperCase() + ((profile.last || " ")[0] || "").toUpperCase();
+
+    const avatarSrc = profile.avatar; // Directly use Base64
+    const coverSrc = profile.cover; // Directly use Base64
+
+    const heroBg = coverSrc
+      ? `linear-gradient(180deg, rgba(0,0,0,.15) 0%, ${C.bg} 100%), url(${coverSrc})`
+      : preset.css;
+
+    const heroStyle = `background:${heroBg}; background-size:cover; background-position:center;`;
+
+    const section = (title, html) => `
+      <div class="section" style="border-top:1px solid ${C.line};">
+        <div class="st" style="color:${C.muted};">${title}</div>
+        ${html}
+      </div>
+    `;
+
+    const about = profile.bio?.trim()
+      ? section("About", `<div style="color:${C.fg}; opacity:.92; font-size:14px; line-height:1.75; white-space:pre-wrap">${escapeHtml(profile.bio)}</div>`)
+      : "";
+
+    const skills = profile.skills?.length
+      ? section("Skills", `
+        <div class="badgeRow">
+          ${profile.skills.map(s => `<div class="badge" style="background:${C.card}; border-color:${C.line}; color:${C.fg};">${escapeHtml(s)}</div>`).join("")}
+        </div>
+      `)
+      : "";
+
+    const services = profile.services?.length
+      ? section("Services", `
+        <div>
+          ${profile.services.map(s => `
+            <div class="svc" style="background:${C.card}; border-color:${C.line}; border-left:3px solid ${C.accent};">
+              <div class="t" style="color:${C.fg};">${escapeHtml(s.title)}</div>
+              ${s.desc?.trim() ? `<div class="d" style="color:${C.muted};">${escapeHtml(s.desc)}</div>` : ``}
+            </div>
+          `).join("")}
+        </div>
+      `)
+      : "";
+
+    const postsHtml = posts?.length
+      ? section("Posts", `
+        <div style="display:grid; gap:10px">
+          ${posts.map(p => `
+            <div style="border:1px solid ${C.line}; background:${C.card}; border-radius:14px; overflow:hidden">
+              <div style="padding:10px 12px; border-bottom:1px solid ${C.line}; color:${C.muted}; font-size:12px">${escapeHtml(fmtDate(p.createdAt))}</div>
+              ${p.image ? `<img src="${p.image}" alt="" />` : ""} <!-- Directly use Base64 image data -->
+              ${p.text?.trim() ? `<div style="padding:12px; color:${C.fg}; font-size:14px; line-height:1.7; white-space:pre-wrap">${escapeHtml(p.text)}</div>` : ""}
+            </div>
+          `).join("")}
+        </div>
+      `)
+      : "";
+
+    // "Get in Touch" button logic
+    let ctaButtonHtml = '';
+    if (profile.chatLink?.trim() || profile.contact?.trim()) {
+      ctaButtonHtml = `
+          <button class="cta" id="publicGetInTouch" data-owner-id="${profile.profileOwnerId}" data-owner-name="${escapeHtml(profile.first)} ${escapeHtml(profile.last)}" style="background:${C.accent}; color:${(C.bg === "#fbfaf8" || C.bg === "#fafaf9") ? "#ffffff" : "#0a0a0a"}; text-decoration: none; display: block; border: none; cursor: pointer;">Get in Touch</button>
+      `;
+    }
+    
+    // Conditional rendering of publicNav based on forPreview
+    const publicNav = forPreview ? '' : `
+      <div class="publicNav" style="background:${C.navBg}; border-bottom:1px solid ${C.line};">
+        <a href="#/home" class="b" style="color:${C.fg}; text-decoration:none;">Kat<span>Card</span></a>
+        <button class="btn primary btn-sm" id="publicGetYours">Get Yours</button>
+      </div>
+    `;
+
+    mount.innerHTML = `
+      <div style="min-height:100%; background:${C.bg}; color:${C.fg}; overflow-y:auto;">
+        ${publicNav}
+        <div class="publicBody">
+          <div class="heroBlock" style="${heroStyle}; color:${C.fg};">
+            <div style="position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,.08) 0%, ${C.bg} 100%); pointer-events:none;"></div>
+            <div style="position:relative">
+              <div class="av" style="border-color:${C.line}; background:${C.card}; color:${C.fg};">
+                ${avatarSrc ? `<img src="${avatarSrc}" alt="avatar" />` : `<span>${escapeHtml(initials)}</span>`}
+              </div>
+              <div class="nm">${escapeHtml(profile.first)} ${escapeHtml(profile.last)}</div>
+              ${profile.headline?.trim() ? `<div class="hdln" style="color:${C.muted}">${escapeHtml(profile.headline)}</div>` : ""}
+              ${profile.location?.trim() ? `<div class="loc" style="color:${C.accent}">${escapeHtml(profile.location)}</div>` : ""}
+            </div>
+          </div>
+
+          ${about}${skills}${services}${postsHtml}${ctaButtonHtml}
+
+          <div style="padding:18px 16px; color:${C.muted}; text-align:center; border-top:1px solid ${C.line};">
+            <div style="font-size:13px">Created with KatCard</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    if (!forPreview) { // Only add listener for main public view
+      $("#publicGetYours")?.addEventListener("click", () => {
+        go("#/home");
+      });
+      // Add event listener for the new chat button
+      $("#publicGetInTouch")?.addEventListener("click", (e) => {
+          const ownerId = e.target.dataset.ownerId;
+          const ownerName = e.target.dataset.ownerName;
+          if (ownerId) {
+              openVisitorChatModal(ownerId, ownerName);
+          }
+      });
+    }
+
+    // Update OG Meta tags in the DOM for *this loaded page*, not for social media crawlers
+    if (!forPreview) {
+      const currentUrl = window.location.href;
+      $("#og-title").setAttribute("content", `${profile.first} ${profile.last}'s KatCard Profile`);
+      $("#og-description").setAttribute("content", profile.headline || profile.bio || "Check out this professional profile on KatCard.");
+      if (avatarSrc) {
+        $("#og-image").setAttribute("content", avatarSrc);
+      } else {
+        $("#og-image").setAttribute("content", "https://via.placeholder.com/1200x630.png?text=KatCard+Profile"); 
+      }
+      $("#og-url").setAttribute("content", currentUrl);
+    }
+  }
+
+  function renderPreviewInto(el, profile, posts){
+    // When rendering for preview, we always include images so the user sees them.
+    // The share link itself can then toggle image inclusion.
+    const u = state.session ? state.users.find(x => x.id === state.session.userId) : null;
+    const profileOwnerIdForPreview = u ? u.id : "sample_owner_id"; // Provide a dummy ID for home preview
+    const profileWithId = { ...profile, profileOwnerId: profileOwnerIdForPreview };
+    const payload = makeSharePayload(profileWithId, posts, true); 
+    renderPublic(payload, el, true); // Pass true for forPreview
+  }
+
+  /***********************
+   * Router
+   ************************/
+  function go(hash){
+    location.hash = hash;
+  }
+
+  function parseRoute(){
+    // priority: public share link
+    const pub = parsePublicFromHash();
+    if (pub) return { type:"public", data: pub };
+
+    const h = (location.hash || "#/home");
+    if (!h.startsWith("#/")) return { type:"route", route:"home" };
+    const route = h.slice(2).split("?")[0] || "home";
+    return { type:"route", route };
+  }
+
+  function showPage(id){
+    $$(".page").forEach(p => p.classList.remove("active"));
+    const el = $("#page-" + id);
+    if (el) el.classList.add("active");
+  }
+
+  function renderTopbar(){
+    const actions = $("#topActions");
+    const tag = $("#tagline");
+    const s = state.session;
+
+    const isPublic = !!parsePublicFromHash();
+    $("#topbar").style.display = isPublic ? "none" : "flex";
+
+    if (isPublic) return;
+
+    if (!s){
+      tag.textContent = "Premium Digital Identity";
+      actions.innerHTML = `
+        <button class="btn ghost btn-sm" id="tbSignIn">Sign In</button>
+        <button class="btn primary btn-sm" id="tbGet">Get Started</button>
+        <button class="btn link btn-sm" id="tbAdmin">Admin</button>
+      `;
+      $("#tbSignIn").onclick = () => go("#/login");
+      $("#tbGet").onclick = () => go("#/register");
+      $("#tbAdmin").onclick = () => go("#/admin-login");
+      return;
+    }
+
+    const u = state.users.find(x => x.id === s.userId);
+    if (s.role === "admin"){
+      tag.textContent = "Admin Dashboard";
+      actions.innerHTML = `
+        <div class="pill">🔒 Admin: ${escapeHtml(u?.email || "")}</div>
+        <button class="btn ghost btn-sm" id="tbAdminOut">Sign Out</button>
+      `;
+      $("#tbAdminOut").onclick = signOut;
+      return;
+    }
+
+    tag.textContent = "Your Dashboard";
+    actions.innerHTML = `
+      <div class="pill">👤 ${escapeHtml(u?.first || "")} ${escapeHtml(u?.last || "")} • ${escapeHtml(u?.email || "")}</div>
+      <button class="btn ghost btn-sm" id="tbDash">Dashboard</button>
+      <button class="btn ghost btn-sm" id="tbShare">Share</button>
+      <button class="btn ghost btn-sm" id="tbOut">Sign Out</button>
+    `;
+    $("#tbDash").onclick = () => go("#/dashboard");
+    $("#tbShare").onclick = () => openShareModal();
+    $("#tbOut").onclick = signOut;
+  }
+
+  function guard(route){
+    const s = state.session;
+    if (["dashboard","posts","appearance","settings", "chat"].includes(route)){
+      if (!s) return {redirect:"login"};
+      const u = state.users.find(x => x.id === s.userId);
+      if (!u) return {redirect:"home"};
+      if (u.role !== "admin" && !u.activated) return {redirect:"activate"};
+      if (u.role === "admin") return {redirect:"admin"};
+    }
+    if (route === "admin"){
+      if (!s || s.role !== "admin") return {redirect:"admin-login"};
+    }
+    if (route === "admin-login"){
+      if (s?.role === "admin") return {redirect:"admin"};
+    }
+    if (route === "login" || route === "register" || route === "home"){
+      // ok
+    }
+    if (route === "activate"){
+      if (!s) return {redirect:"login"};
+      const u = state.users.find(x => x.id === s.userId);
+      if (!u) return {redirect:"home"};
+      if (u.role === "admin") return {redirect:"admin"};
+      if (u.activated) return {redirect:"dashboard"};
+    }
+    return {ok:true};
+  }
+
+  function route(){
+    renderTopbar();
+
+    const pr = parseRoute();
+    if (pr.type === "public"){
+      showPage("public");
+      renderPublic(pr.data, $("#publicMount"));
+      return;
+    }
+
+    let route = pr.route || "home";
+    const g = guard(route);
+    if (g.redirect){
+      go("#/" + g.redirect);
+      return;
+    }
+
+    showPage(route);
+
+    // per-page renders
+    if (route === "home") renderHome();
+    if (route === "dashboard") renderDashboard();
+    if (route === "posts") renderPosts();
+    if (route === "appearance") renderAppearance();
+    if (route === "settings") renderSettings();
+    if (route === "chat") renderChatOwner(); // New chat owner view
+    if (route === "admin") renderAdmin();
+  }
+
+  /***********************
+   * Auth actions
+   ************************/
+  function msg(el, kind, text){
+    el.innerHTML = text ? `<div class="msg ${kind}">${escapeHtml(text)}</div>` : "";
+  }
+
+  function setLoading(btn, spin, on){
+    if (!btn || !spin) return;
+    btn.disabled = !!on;
+    spin.style.display = on ? "inline-block" : "none";
+  }
+
+  function signOut(){
+    state.session = null;
+    saveState("session"); // Persist session change
+    toast("Signed out", "ok");
+    go("#/home");
+  }
+
+  function requireUser(){
+    if (!state.session) throw new Error("No session");
+    const u = state.users.find(x => x.id === state.session.userId);
+    if (!u) throw new Error("No user");
+    return u;
+  }
+
+  async function copyText(text){
+    try{
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    }catch(_){}
+    // fallback
+    try{
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand("copy");
+      ta.remove();
+      return ok;
+    }catch(_){
+      return false;
+    }
+  }
+
+  /***********************
+   * Home
+   ************************/
+  function renderHome(){
+    // preview: show a sample
+    const sample = {
+      fn:"Ava",
+      ln:"Sterling",
+      hl:"Modern Executive • Strategy & Growth",
+      lc:"London",
+      em:"ava@example.com",
+      bio:"I help brands build premium presence with clarity, taste, and measurable outcomes.",
+      sk:["Brand Strategy","Product Marketing","Executive Coaching"],
+      sv:[{t:"Strategy Sprint", d:"A focused 2-week sprint to define positioning and plan next steps."}],
+      tpl:"modern-executive",
+      ac:"#c9a96e",
+      bg:"onyx",
+      ps:[{t:"Quiet progress is still progress.", at:now()}]
+    };
+    renderPublic(sample, $("#homePreview"), true); // Use forPreview for home sample
+  }
+
+  /***********************
+   * Login/Register/Activate
+   ************************/
+  function initAuthUI(){
+    // Toggles
+    $("#loginToggle").onclick = () => togglePw($("#loginPass"), $("#loginToggle"));
+    $("#regToggle").onclick = () => togglePw($("#regPass"), $("#regToggle"));
+    $("#adminToggle").onclick = () => togglePw($("#adminPass"), $("#adminToggle"));
+
+    function togglePw(input, btn){
+      const isPw = input.type === "password";
+      input.type = isPw ? "text" : "password";
+      btn.textContent = isPw ? "Hide" : "Show";
+    }
+
+    $("#forgotBtn").onclick = () => {
+      const email = ($("#loginEmail").value || "").trim().toLowerCase();
+      if (!email) { toast("Enter your email first", "err"); return; }
+      const u = state.users.find(x => x.email === email && x.role !== "admin");
+      if (!u) toast("No user found for that email", "err");
+      else toast("Reset flow", "ok", "In production, a reset email would be sent.");
+    };
+
+    $("#googleBtn").onclick = () => toast("Google sign-in", "ok", "OAuth requires server setup; this is a placeholder.");
+
+    $("#toRegister").onclick = () => go("#/register");
+    $("#toLogin").onclick = () => go("#/login");
+    $("#toHomeFromLogin").onclick = () => go("#/home");
+    $("#toHomeFromRegister").onclick = () => go("#/home");
+    $("#toHomeFromAdminLogin").onclick = () => go("#/admin-login");
+    $("#actSignOut").onclick = signOut;
+
+    // Remember email logic
+    const rememberEmailCheckbox = $("#rememberEmail");
+    const loginEmailInput = $("#loginEmail");
+
+    if (localStorage.getItem("katcard_remembered_email")) {
+      loginEmailInput.value = localStorage.getItem("katcard_remembered_email");
+      rememberEmailCheckbox.checked = true;
+    }
+
+    rememberEmailCheckbox.onchange = () => {
+      if (rememberEmailCheckbox.checked) {
+        localStorage.setItem("katcard_remembered_email", loginEmailInput.value);
+      } else {
+        localStorage.removeItem("katcard_remembered_email");
+      }
+    };
+
+    loginEmailInput.onchange = () => {
+      if (rememberEmailCheckbox.checked) {
+        localStorage.setItem("katcard_remembered_email", loginEmailInput.value);
+      }
+    };
+  }
+
+  async function handleLogin(e){
+    e.preventDefault();
+    const msgEl = $("#loginMsg");
+    msg(msgEl, "", "");
+
+    const email = ($("#loginEmail").value || "").trim().toLowerCase();
+    const pass = ($("#loginPass").value || "");
+    if (!email || !pass) return msg(msgEl, "err", "Please fill in all fields.");
+
+    const btn = $("#loginSubmit");
+    const spin = $("#loginSpin");
+    setLoading(btn, spin, true);
+    await wait(500);
+
+    const u = state.users.find(x => x.email === email && x.pass === pass);
+    if (!u){
+      setLoading(btn, spin, false);
+      return msg(msgEl, "err", "Invalid email or password.");
+    }
+    if (u.role === "admin"){
+      setLoading(btn, spin, false);
+      return msg(msgEl, "err", "Admin users must sign in via Admin page.");
+    }
+
+    state.session = { userId: u.id, role: u.role };
+    saveState("session"); // Persist session
+    msg(msgEl, "ok", "Signed in. Redirecting…");
+    await wait(350);
+
+    if (!u.activated) go("#/activate");
+    else go("#/dashboard");
+  }
+
+  async function handleRegister(e){
+    e.preventDefault();
+    const msgEl = $("#regMsg");
+    msg(msgEl, "", "");
+
+    const first = ($("#regFirst").value || "").trim();
+    const last = ($("#regLast").value || "").trim();
+    const email = ($("#regEmail").value || "").trim().toLowerCase();
+    const pass = ($("#regPass").value || "");
+
+    if (!first || !last || !email || !pass) return msg(msgEl, "err", "Please fill in all fields.");
+    if (pass.length < 8) return msg(msgEl, "err", "Password must be at least 8 characters.");
+    if (state.users.some(u => u.email === email)) return msg(msgEl, "err", "Email already registered.");
+
+    const btn = $("#regSubmit");
+    const spin = $("#regSpin");
+    setLoading(btn, spin, true);
+    await wait(600);
+
+    const id = uid("user");
+    state.users.push({ id, email, pass, first, last, role:"user", activated:false, createdAt: now() });
+    saveState("users"); // Persist new user
+
+    ensureProfile(id); // Creates and saves profile
+    ensurePosts(id);   // Creates and saves posts array
+
+    state.session = { userId: id, role:"user" };
+    saveState("session"); // Persist session
+
+    msg(msgEl, "ok", "Account created. Activation required…");
+    await wait(350);
+    go("#/activate");
+    setLoading(btn, spin, false);
+  }
+
+  async function handleActivate(e){
+    e.preventDefault();
+    const msgEl = $("#actMsg");
+    msg(msgEl, "", "");
+
+    const u = requireUser();
+    if (u.role !== "user") return msg(msgEl, "err", "Invalid activation context.");
+
+    const code = $$("#codeInputs input").map(i => (i.value || "").toUpperCase()).join("");
+    if (code.length !== 6) return msg(msgEl, "err", "Enter the full 6-character code.");
+
+    const btn = $("#actSubmit");
+    const spin = $("#actSpin");
+    setLoading(btn, spin, true);
+    await wait(450);
+
+    const rec = state.codes.find(c => c.code === code && !c.used);
+    if (!rec){
+      setLoading(btn, spin, false);
+      return msg(msgEl, "err", "Invalid or already used code.");
+    }
+    if (rec.assignedEmail && rec.assignedEmail.toLowerCase() !== u.email.toLowerCase()){
+      setLoading(btn, spin, false);
+      return msg(msgEl, "err", "This code is assigned to a different account.");
+    }
+
+    // consume
+    rec.used = true;
+    rec.usedBy = u.id;
+    rec.usedAt = now();
+    u.activated = true;
+    saveState("codes"); // Persist code update
+    saveState("users"); // Persist user activation
+
+    // Update session info
+    state.session.activated = true;
+    saveState("session");
+
+    msg(msgEl, "ok", "Activated! Redirecting…");
+    await wait(450);
+    go("#/dashboard");
+    setLoading(btn, spin, false);
+  }
+
+  async function handleAdminLogin(e){
+    e.preventDefault();
+    const msgEl = $("#adminLoginMsg");
+    msg(msgEl, "", "");
+
+    const email = ($("#adminEmail").value || "").trim().toLowerCase();
+    const pass = ($("#adminPass").value || "");
+    if (!email || !pass) return msg(msgEl, "err", "Please fill in all fields.");
+
+    const btn = $("#adminLoginSubmit");
+    const spin = $("#adminSpin");
+    setLoading(btn, spin, true);
+    await wait(450);
+
+    if (email !== ADMIN_EMAIL.toLowerCase() || pass !== ADMIN_PASS){
+      setLoading(btn, spin, false);
+      return msg(msgEl, "err", "Invalid admin credentials.");
+    }
+
+    const admin = state.users.find(u => u.role === "admin");
+    state.session = { userId: admin.id, role:"admin" };
+    saveState("session"); // Persist session
+    msg(msgEl, "ok", "Admin access granted. Redirecting…");
+    await wait(350);
+    go("#/admin");
+    setLoading(btn, spin, false);
+  }
+
+  function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+  /***********************
+   * Dashboard
+   ************************/
+  function countNonEmptySections(p, posts){
+    let n = 0;
+    if (p.bio?.trim()) n++;
+    if (p.skills?.length) n++;
+    if (p.services?.length) n++;
+    if (p.contact?.trim()) n++;
+    if (p.chatLink?.trim()) n++; // Count custom chat link as a section
+    if (posts?.length) n++;
+    return n;
+  }
+
+  async function renderDashboard(){
+    const cloudProfile = await loadProfileFromCloud(state.session.userId);
+    if (cloudProfile) {
+      state.profiles[state.session.userId] = cloudProfile;
+    }
+    const u = requireUser();
+    const p = ensureProfile(u.id);
+    const posts = ensurePosts(u.id);
+
+    // sidebar pill + KPIs
+    $("#userPill").textContent = `${u.first} ${u.last} • ${u.email}`;
+    $("#kSections").textContent = String(countNonEmptySections(p, posts));
+    $("#kPosts").textContent = String(posts.length);
+    const tplName = TEMPLATE_META.find(t => t.id === p.template)?.name || "—";
+    $("#kTemplate").textContent = tplName;
+
+    // nav side buttons
+    $$(".navitem").forEach(b => {
+      b.classList.toggle("active", b.dataset.go === "dashboard");
+      b.onclick = () => go("#/" + b.dataset.go);
+    });
+
+    $("#userSignOut").onclick = signOut;
+
+    // Form fields
+    $("#pFirst").value = p.first || "";
+    $("#pLast").value  = p.last || "";
+    $("#pHeadline").value = p.headline || "";
+    $("#pLocation").value = p.location || "";
+    $("#pContact").value = p.contact || "";
+    $("#pChatLink").value = p.chatLink || ""; // Load chat ID
+    $("#pBio").value = p.bio || "";
+
+    // Avatar/Cover
+    renderAvatarCover(p);
+
+    // Presets
+    renderPresetGrid(p);
+
+    // Skills
+    renderSkills(p);
+
+    // Services
+    renderServices(p);
+
+    // Save
+    $("#saveProfile").onclick = async () => {
+      p.first = ($("#pFirst").value || "").trim();
+      p.last = ($("#pLast").value || "").trim();
+      p.headline = ($("#pHeadline").value || "").trim();
+      p.location = ($("#pLocation").value || "").trim();
+      p.contact = ($("#pContact").value || "").trim();
+      p.chatLink = ($("#pChatLink").value || "").trim();
+      p.bio = ($("#pBio").value || "").trim();
+
+      saveState("profiles");
+      toast("Profile saved", "ok");
+      renderDashboardKPIs();
+      renderLivePreview();
+      renderSettings();
+
+      // 🔥 ADD THIS LINE
+      await saveProfileToCloud(
+        state.session.userId,
+        state.profiles[state.session.userId]
+      );
+    };
+
+    $("#refreshPreview").onclick = renderLivePreview;
+
+    // Share buttons
+    $("#shareBtn").onclick = async () => {
+      const { url } = shareLinkForCurrent(state.shareLast.includeImages); // Use current share setting
+      const ok = await copyText(url);
+      if (ok) toast("Profile link copied", "ok");
+      else toast("Copy not available", "err", "Select the link and press Ctrl+C.");
+    };
+    $("#shareModalBtn").onclick = () => openShareModal();
+    $("#openShare").onclick = () => openShareModal();
+    $("#openPublicHere").onclick = () => {
+      const { url } = shareLinkForCurrent(true); // Always include images for full local preview
+      location.href = url; // navigate to public view
+    };
+
+    // File pickers
+    $("#avatarPick").onclick = () => $("#avatarFile").click();
+    $("#coverPick").onclick = () => $("#coverFile").click();
+
+    $("#avatarFile").onchange = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const data = await readAsDataURL(file);
+        p.avatar = data; // Store Base64 directly
+        saveState("profiles");
+        toast("Profile image updated", "ok");
+        renderAvatarCover(p);
+        renderLivePreview();
+      } catch (err) {
+        toast("Could not read image", "err", err);
+      }
+      e.target.value = ""; // Clear file input
+    };
+
+    $("#coverFile").onchange = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const data = await readAsDataURL(file);
+        p.cover = data; // Store Base64 directly
+        p.presetBg = p.presetBg || "onyx"; // Keep preset if custom cover added
+        saveState("profiles");
+        toast("Background image updated", "ok");
+        renderAvatarCover(p);
+        renderLivePreview();
+      } catch (err) {
+        toast("Could not read image", "err", err);
+      }
+      e.target.value = ""; // Clear file input
+    };
+
+    $("#clearImages").onclick = () => {
+      p.avatar = null;
+      p.cover = null;
+      saveState("profiles"); // Persist image clear
+      toast("Images cleared", "ok");
+      renderAvatarCover(p);
+      renderLivePreview();
+    };
+
+    // skill add
+    $("#addSkillBtn").onclick = () => {
+      const row = $("#skillAddRow");
+      row.style.display = row.style.display === "none" ? "block" : "none";
+      if (row.style.display === "block") $("#skillInput").focus();
+    };
+    $("#skillCancelBtn").onclick = () => { $("#skillAddRow").style.display = "none"; $("#skillInput").value = ""; };
+    $("#skillSaveBtn").onclick = () => addSkill(p);
+    $("#skillInput").onkeydown = (ev) => { if (ev.key === "Enter") { ev.preventDefault(); addSkill(p); } };
+
+    function addSkill(p){
+      const v = ($("#skillInput").value || "").trim();
+      if (!v) return;
+      p.skills = p.skills || [];
+      if (p.skills.includes(v)) return toast("Skill already added", "err");
+      p.skills.push(v);
+      saveState("profiles"); // Persist skill add
+      $("#skillInput").value = "";
+      toast("Skill added", "ok");
+      renderSkills(p);
+      renderDashboardKPIs();
+      renderLivePreview();
+    }
+
+    // services
+    $("#addServiceBtn").onclick = () => {
+      const f = $("#serviceForm");
+      f.style.display = f.style.display === "none" ? "block" : "none";
+      if (f.style.display === "block") $("#svcTitle").focus();
+    };
+    $("#svcCancel").onclick = () => {
+      $("#serviceForm").style.display = "none";
+      $("#svcTitle").value = "";
+      $("#svcDesc").value = "";
+    };
+    $("#svcSave").onclick = () => {
+      const title = ($("#svcTitle").value || "").trim();
+      const desc = ($("#svcDesc").value || "").trim();
+      if (!title) return toast("Service needs a name", "err");
+      p.services = p.services || [];
+      p.services.unshift({ id: uid("svc"), title, desc });
+      saveState("profiles"); // Persist service add
+      $("#svcTitle").value = ""; $("#svcDesc").value = "";
+      $("#serviceForm").style.display = "none";
+      toast("Service added", "ok");
+      renderServices(p);
+      renderDashboardKPIs();
+      renderLivePreview();
+    };
+
+    renderLivePreview();
+
+    function renderDashboardKPIs(){
+      $("#kSections").textContent = String(countNonEmptySections(p, ensurePosts(u.id)));
+      $("#kPosts").textContent = String(ensurePosts(u.id).length);
+      const tplName = TEMPLATE_META.find(t => t.id === p.template)?.name || "—";
+      $("#kTemplate").textContent = tplName;
+      $("#userPill").textContent = `${u.first} ${u.last} • ${u.email}`;
+    }
+  }
+
+  function renderAvatarCover(p){
+    const av = $("#avatarPick");
+    const avatarData = p.avatar; // Directly use Base64
+    av.innerHTML = avatarData ? `<img alt="avatar" src="${avatarData}">` : `<span style="color:var(--gold); font-weight:900;">+</span>`;
+
+    const cv = $("#coverPick");
+    const coverData = p.cover; // Directly use Base64
+    if (coverData){
+      cv.innerHTML = `<img alt="cover" src="${coverData}">`;
+    } else {
+      const preset = PRESET_BGS.find(x => x.id === p.presetBg) || PRESET_BGS[0];
+      cv.innerHTML = `<div style="width:100%;height:100%; background:${preset.css}; display:flex; align-items:center; justify-content:center; color: rgba(255,255,255,.75); font-size:13px;">Preset: ${escapeHtml(preset.name)}</div>`;
+    }
+  }
+
+  function renderPresetGrid(p){
+    const grid = $("#presetGrid");
+    grid.innerHTML = PRESET_BGS.map(bg => `
+      <div class="preset ${bg.id === p.presetBg && !p.cover ? "active":""}" title="${escapeHtml(bg.name)}" data-bg="${bg.id}" style="background:${bg.css}"></div>
+    `).join("");
+    $$(".preset", grid).forEach(el => {
+      el.onclick = () => {
+        p.presetBg = el.dataset.bg;
+        p.cover = null; // Clear custom cover if a preset is chosen
+        saveState("profiles"); // Persist preset change
+        toast("Preset background applied", "ok");
+        renderAvatarCover(p);
+        renderPresetGrid(p);
+        renderLivePreview();
+      };
+    });
+  }
+
+  function renderSkills(p){
+    const row = $("#skillsRow");
+    const empty = $("#skillsEmpty");
+    row.innerHTML = "";
+    const skills = (p.skills || []);
+    empty.style.display = skills.length ? "none" : "block";
+    skills.forEach(skill => {
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.innerHTML = `<span>${escapeHtml(skill)}</span><button aria-label="Remove">×</button>`;
+      chip.querySelector("button").onclick = () => {
+        p.skills = p.skills.filter(s => s !== skill);
+        saveState("profiles"); // Persist skill remove
+        toast("Skill removed", "ok");
+        renderSkills(p);
+        renderLivePreview();
+      };
+      row.appendChild(chip);
+    });
+  }
+
+  function renderServices(p){
+    const list = $("#servicesList");
+    const empty = $("#servicesEmpty");
+    const services = (p.services || []);
+    empty.style.display = services.length ? "none" : "block";
+    list.innerHTML = services.map(s => `
+      <div class="svc" style="background: rgba(255,255,255,.02); border-color: var(--line); border-left: 3px solid ${escapeHtml(p.accent || "#c9a96e")};">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px">
+          <div>
+            <div class="t" style="color:var(--text)">${escapeHtml(s.title)}</div>
+            ${s.desc?.trim() ? `<div class="d">${escapeHtml(s.desc)}</div>` : ""}
+          </div>
+          <button class="iconbtn" data-id="${escapeHtml(s.id)}" title="Delete">🗑</button>
+        </div>
+      </div>
+    `).join("");
+
+    $$("button.iconbtn", list).forEach(b => {
+      b.onclick = () => {
+        const id = b.dataset.id;
+        p.services = p.services.filter(x => x.id !== id);
+        saveState("profiles"); // Persist service remove
+        toast("Service removed", "ok");
+        renderServices(p);
+        renderLivePreview();
+      };
+    });
+  }
+
+  function renderLivePreview(){
+    const u = requireUser();
+    const p = ensureProfile(u.id);
+    const posts = ensurePosts(u.id);
+    renderPreviewInto($("#livePreview"), p, posts);
+  }
+
+  function readAsDataURL(file){
+    return new Promise((res, rej) => {
+      if (file.size > 2 * 1024 * 1024) { // Max 2MB for simplicity
+        rej("File too large (max 2MB)");
+        return;
+      }
+      const fr = new FileReader();
+      fr.onerror = () => rej(fr.error);
+      fr.onload = () => res(fr.result);
+      fr.readAsDataURL(file);
+    });
+  }
+
+  /***********************
+   * Posts
+   ************************/
+  function renderPosts(){
+    const u = requireUser();
+    const posts = ensurePosts(u.id);
+    $("#postsPill").textContent = `${u.first} ${u.last} • ${u.email}`;
+    $("#postsBack").onclick = () => go("#/dashboard");
+    $("#createPostBtn").onclick = () => openPostModal();
+
+    const list = $("#postsList");
+    const emptyCard = $("#postsEmpty");
+    if (!posts.length){
+      list.innerHTML = "";
+      emptyCard.style.display = "block";
+    } else {
+      emptyCard.style.display = "none";
+      list.innerHTML = posts.map(p => `
+        <div class="post">
+          <div class="meta">
+            <div>${escapeHtml(fmtDate(p.createdAt))}</div>
+            <button class="iconbtn" data-id="${escapeHtml(p.id)}" title="Delete">🗑</button>
+          </div>
+          ${p.image ? `<img src="${p.image}" alt="" />` : ""} <!-- Directly use Base64 image data -->
+          <div class="content">
+            <div class="txt">${escapeHtml(p.text)}</div>
+          </div>
+        </div>
+      `).join("");
+      $$("button.iconbtn", list).forEach(b => {
+        b.onclick = () => {
+          const id = b.dataset.id;
+          if (!confirm("Delete this post?")) return;
+          state.posts[u.id] = state.posts[u.id].filter(x => x.id !== id);
+          saveState("posts"); // Persist post delete
+          toast("Post deleted", "ok");
+          renderPosts();
+          // keep dashboard KPIs and share link up to date
+        };
+      });
+    }
+  }
+
+  function openPostModal(){
+    $("#postMsg").innerHTML = "";
+    $("#postText").value = "";
+    $("#postImgFile").value = "";
+    $("#postImgPreview").style.display = "none";
+    $("#postClearImg").style.display = "none";
+    $("#postImgPreviewImg").src = ""; // Clear existing image
+    $("#postOverlay").classList.add("active");
+
+    $("#postPickImg").onclick = () => $("#postImgFile").click();
+    $("#postImgFile").onchange = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try{
+        const data = await readAsDataURL(file);
+        $("#postImgPreviewImg").src = data;
+        $("#postImgPreview").style.display = "grid";
+        $("#postClearImg").style.display = "inline-flex";
+        $("#postClearImg").onclick = () => {
+          $("#postImgFile").value = "";
+          $("#postImgPreview").style.display = "none";
+          $("#postClearImg").style.display = "none";
+          $("#postImgPreviewImg").src = "";
+        };
+      }catch(err){
+        toast("Could not read image", "err", err.message || err);
+      }
+      e.target.value = ""; // Clear file input
+    };
+
+    $("#postPublish").onclick = async () => {
+      const u = requireUser();
+      const text = ($("#postText").value || "").trim();
+      let imageData = ""; // Variable to hold Base64 image data
+
+      const imgFile = $("#postImgFile").files?.[0];
+      if (imgFile) {
+          try {
+              imageData = await readAsDataURL(imgFile); // Await image data
+          } catch (err) {
+              toast("Could not read image for post", "err", err.message || err);
+              return;
+          }
+      }
+
+      if (!text && !imageData){
+        $("#postMsg").innerHTML = `<div class="msg err">Add text or an image.</div>`;
+        return;
+      }
+      const posts = ensurePosts(u.id);
+      posts.unshift({ id: uid("post"), createdAt: now(), text, image: imageData || null }); // Use Base64 data
+      saveState("posts"); // Persist new post
+      toast("Post published", "ok");
+      closePostModal();
+      go("#/posts");
+    };
+
+    $("#postClose").onclick = closePostModal;
+    $("#postCancel").onclick = closePostModal;
+    $("#postOverlay").onclick = (e) => { if (e.target === $("#postOverlay")) closePostModal(); };
+  }
+
+  function closePostModal(){
+    $("#postOverlay").classList.remove("active");
+  }
+
+  /***********************
+   * Appearance
+   ************************/
+  function renderAppearance(){
+    const u = requireUser();
+    const p = ensureProfile(u.id);
+    $("#appearancePill").textContent = `${u.first} ${u.last} • ${u.email}`;
+    $("#appearanceBack").onclick = () => go("#/dashboard");
+
+    const tl = $("#templateList");
+    tl.innerHTML = TEMPLATE_META.map(t => `
+      <div class="tpl ${t.id === p.template ? "active":""}" data-id="${escapeHtml(t.id)}">
+        <div class="name">${escapeHtml(t.name)}</div>
+        <div class="desc">${escapeHtml(t.desc)}</div>
+      </div>
+    `).join("");
+    $$(".tpl", tl).forEach(el => {
+      el.onclick = () => {
+        p.template = el.dataset.id;
+        saveState("profiles"); // Persist template change
+        toast("Template updated", "ok");
+        renderAppearance(); // Re-render to update active state
+        renderLivePreview();
+      };
+    });
+
+    const accents = ["#c9a96e","#f5c06c","#3b82f6","#22c55e","#a855f7","#ef4444","#14b8a6","#f97316"];
+    const ar = $("#accentRow");
+    ar.innerHTML = accents.map(c => `
+      <div class="swatch ${c.toLowerCase() === (p.accent||"").toLowerCase() ? "active":""}" data-c="${c}" style="background:${c}"></div>
+    `).join("");
+    $$(".swatch", ar).forEach(s => {
+      s.onclick = () => {
+        p.accent = s.dataset.c;
+        saveState("profiles"); // Persist accent change
+        toast("Accent updated", "ok");
+        renderAppearance(); // Re-render to update active state
+        renderLivePreview();
+      };
+    });
+
+    $("#appearanceSave").onclick = () => {
+      toast("Appearance saved", "ok");
+      go("#/dashboard");
+    };
+    $("#appearancePreview").onclick = () => {
+      const { url } = shareLinkForCurrent(true); // Always include images for full local preview
+      location.href = url;
+    };
+  }
+
+  /***********************
+   * Chat Owner View
+   ************************/
+  let activeChatVisitorId = null;
+
+  function renderChatOwner() {
+      const u = requireUser();
+      // Ensure current user's messages are initialized if they don't exist
+      if (!state.messages[u.id]) {
+          state.messages[u.id] = {};
+          saveState("messages");
+      }
+
+      $("#chatPill").textContent = `${u.first} ${u.last} • ${u.email}`;
+      $("#chatBack").onclick = () => go("#/dashboard");
+      
+      $$(".navitem").forEach(b => b.classList.remove("active"));
+      $(`[data-go="chat"]`).classList.add("active");
+
+
+      const conversationsListEl = $("#conversationsList");
+      const ownerChatWindowEl = $("#ownerChatWindow");
+      const ownerChatMessagesEl = $("#ownerChatMessages");
+      const ownerChatMessageInput = $("#ownerChatMessageInput");
+      const currentChatVisitorNameEl = $("#currentChatVisitorName");
+      const noChatsMessageEl = $("#noChatsMessage");
+
+      const ownerMessages = state.messages[u.id] || {};
+      const visitorIds = Object.keys(ownerMessages).sort((a,b) => {
+        const lastMsgA = ownerMessages[a].at(-1);
+        const lastMsgB = ownerMessages[b].at(-1);
+        return (lastMsgB?.timestamp || 0) - (lastMsgA?.timestamp || 0); // Sort by most recent message
+      });
+
+      conversationsListEl.innerHTML = '';
+      if (visitorIds.length === 0) {
+          noChatsMessageEl.style.display = 'block';
+          ownerChatWindowEl.style.display = 'none';
+          currentChatVisitorNameEl.style.display = 'none';
+          return;
+      } else {
+          noChatsMessageEl.style.display = 'none';
+      }
+
+      visitorIds.forEach(visitorId => {
+          const convo = ownerMessages[visitorId];
+          const lastMessage = convo.at(-1);
+          const unreadCount = convo.filter(msg => msg.from === 'visitor' && !msg.readOwner).length;
+          const visitorName = `Visitor ${visitorId.substring(visitorId.length - 4)}`; // Simple visitor name
+
+          const chatItem = document.createElement('div');
+          chatItem.className = `chat-item-owner ${activeChatVisitorId === visitorId ? 'active' : ''} ${unreadCount > 0 ? 'unread' : ''}`;
+          chatItem.dataset.visitorId = visitorId;
+          chatItem.innerHTML = `
+              <div class="info">
+                  <div class="name">${escapeHtml(visitorName)}</div>
+                  <div class="last-msg">${escapeHtml(lastMessage?.text || 'No messages yet')}</div>
+              </div>
+              ${unreadCount > 0 ? `<div class="unread-count">${unreadCount}</div>` : ''}
+          `;
+          chatItem.onclick = () => selectConversation(visitorId, visitorName);
+          conversationsListEl.appendChild(chatItem);
+      });
+
+      function selectConversation(visitorId, visitorName) {
+          activeChatVisitorId = visitorId;
+          $$('.chat-item-owner').forEach(item => item.classList.remove('active'));
+          conversationsListEl.querySelector(`[data-visitor-id="${visitorId}"]`).classList.add('active');
+          
+          currentChatVisitorNameEl.textContent = `Chat with ${visitorName}`;
+          currentChatVisitorNameEl.style.display = 'block';
+          ownerChatWindowEl.style.display = 'flex';
+          renderOwnerChatMessages();
+
+          // Mark messages as read by owner when selected
+          const convo = getConversation(u.id, activeChatVisitorId);
+          convo.forEach(msg => {
+              if (msg.from === 'visitor') msg.readOwner = true;
+          });
+          saveState("messages");
+          // Re-render conversation list to clear unread count visually
+          renderChatOwner(); 
+      }
+
+      function renderOwnerChatMessages() {
+          const convo = getConversation(u.id, activeChatVisitorId);
+          ownerChatMessagesEl.innerHTML = convo.toReversed().map(msg => `
+              <div class="chat-message ${msg.from === 'owner' ? 'owner' : 'visitor'}">
+                  ${escapeHtml(msg.text)}
+                  <div class="meta">${fmtDate(msg.timestamp)}</div>
+              </div>
+          `).join('');
+          ownerChatMessagesEl.scrollTop = ownerChatMessagesEl.scrollHeight; // Scroll to bottom
+      }
+
+      $("#ownerChatSend").onclick = () => {
+          const text = ownerChatMessageInput.value.trim();
+          if (text && activeChatVisitorId) {
+              addMessage(u.id, activeChatVisitorId, 'owner', text);
+              ownerChatMessageInput.value = '';
+              renderOwnerChatMessages();
+          }
+      };
+      ownerChatMessageInput.onkeydown = (e) => {
+          if (e.key === 'Enter') {
+              e.preventDefault();
+              $("#ownerChatSend").click();
+          }
+      };
+
+      if (activeChatVisitorId && conversationsListEl.querySelector(`[data-visitor-id="${activeChatVisitorId}"]`)) {
+          // Re-select active conversation after re-render if it exists
+          conversationsListEl.querySelector(`[data-visitor-id="${activeChatVisitorId}"]`).click();
+      } else if (visitorIds.length > 0) {
+          // Auto-select the first conversation if no active one
+          selectConversation(visitorIds[0], `Visitor ${visitorIds[0].substring(visitorIds[0].length - 4)}`);
+      }
+  }
+
+  /***********************
+   * Settings
+   ************************/
+  function renderSettings(){
+    const u = requireUser();
+    const p = ensureProfile(u.id);
+    $("#settingsPill").textContent = `${u.first} ${u.last} • ${u.email}`;
+    $("#settingsBack").onclick = () => go("#/dashboard");
+    $("#settingsSignOut").onclick = signOut;
+    
+    $$(".navitem").forEach(b => b.classList.remove("active"));
+    $(`[data-go="settings"]`).classList.add("active");
+
+    const { url } = shareLinkForCurrent(state.shareLast.includeImages); // Use current share setting
+    $("#settingsLink").value = url;
+
+    $("#settingsCopy").onclick = async () => {
+      const ok = await copyText($("#settingsLink").value);
+      if (ok) toast("Copied", "ok");
+      else toast("Copy blocked", "err", "Select the link and press Ctrl+C.");
+    };
+    $("#settingsShare").onclick = () => openShareModal();
+    $("#settingsTest").onclick = () => { window.open($("#settingsLink").value, "_blank"); };
+
+    $("#settingsDelete").onclick = () => {
+      if (!confirm("Delete your account (demo)? This cannot be undone.")) return;
+      const idx = state.users.findIndex(x => x.id === u.id);
+      if (idx >= 0) state.users.splice(idx, 1);
+      delete state.profiles[u.id];
+      delete state.posts[u.id];
+      delete state.messages[u.id]; // Delete owner's messages
+      saveState("users"); // Persist user delete
+      saveState("profiles"); // Persist profile delete
+      saveState("posts"); // Persist posts delete
+      saveState("messages"); // Persist message delete
+      signOut();
+      toast("Account deleted (demo)", "ok");
+    };
+  }
+
+  /***********************
+   * Admin
+   ************************/
+  function renderAdmin(){
+    const admin = requireUser();
+    $("#adminPill").textContent = admin.email;
+    $("#adminSignOut").onclick = signOut;
+
+    // filter buttons
+    const seg = $("#codeFilterSeg");
+    $$("button", seg).forEach(b => {
+      b.classList.toggle("active", b.dataset.filter === state.codeFilter);
+      b.onclick = () => { state.codeFilter = b.dataset.filter; renderAdmin(); };
+    });
+
+    $("#genCodeBtn").onclick = () => {
+      const code = uniqueCode();
+      state.codes.unshift({ code, createdAt: now(), used:false, usedBy:null, usedAt:null, assignedEmail:null });
+      saveState("codes"); // Persist new code
+      toast("Code generated", "ok", code);
+      openCodeModal(code);
+      renderAdmin();
+    };
+
+    $("#genAssignedBtn").onclick = () => {
+      const email = prompt("Assign this code to which user email? (optional)", "");
+      if (email === null) return; // cancelled
+      const code = uniqueCode();
+      state.codes.unshift({ code, createdAt: now(), used:false, usedBy:null, usedAt:null, assignedEmail: (email || "").trim() || null });
+      saveState("codes"); // Persist new assigned code
+      toast("Assigned code generated", "ok", code + (email ? ` • ${email}` : ""));
+      openCodeModal(code);
+      renderAdmin();
+    };
+
+    // KPIs
+    const total = state.codes.length;
+    const used = state.codes.filter(c => c.used).length;
+    const users = state.users.filter(u => u.role === "user").length;
+    $("#kCodes").textContent = String(total);
+    $("#kUsed").textContent = String(used);
+    $("#kUsers").textContent = String(users);
+
+    // Codes list
+    const list = $("#codesList");
+    let codes = [...state.codes];
+    if (state.codeFilter === "available") codes = codes.filter(c => !c.used);
+    if (state.codeFilter === "used") codes = codes.filter(c => c.used);
+
+    if (!codes.length){
+      list.innerHTML = `<div class="subtle">No codes found.</div>`;
+    } else {
+      list.innerHTML = codes.map(c => {
+        const usedBy = c.usedBy ? state.users.find(u => u.id === c.usedBy) : null;
+        const status = c.used ? "used" : "unused";
+        const statusLabel = c.used ? "Used" : "Available";
+        const note = c.assignedEmail ? `Assigned: ${escapeHtml(c.assignedEmail)}` : "Unassigned";
+        const meta = c.used
+          ? `Used by ${escapeHtml(usedBy ? usedBy.email : "Unknown")} • ${escapeHtml(fmtDate(c.usedAt))}`
+          : `Created ${escapeHtml(fmtDate(c.createdAt))} • ${note}`;
+        return `
+          <div class="code-item">
+            <div>
+              <div class="code-value">${escapeHtml(c.code)}</div>
+              <div class="subtle" style="margin-top:4px">${meta}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px">
+              <span class="code-status ${status}">${statusLabel}</span>
+              <button class="btn ghost btn-sm" data-copy="${escapeHtml(c.code)}">Copy</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      $$("button[data-copy]", list).forEach(b => {
+        b.onclick = async () => {
+          const code = b.dataset.copy;
+          const ok = await copyText(code);
+          if (ok) toast("Code copied", "ok", code);
+          else toast("Copy blocked", "err", "Select and copy manually.");
+        };
+      });
+    }
+
+    // Users list
+    const ul = $("#usersList");
+    const usersList = state.users.filter(u => u.role === "user").sort((a,b) => b.createdAt - a.createdAt);
+    if (!usersList.length){
+      ul.innerHTML = `<div class="subtle">No users yet.</div>`;
+    } else {
+      ul.innerHTML = usersList.map(u => `
+        <div class="code-item">
+          <div>
+            <div style="font-weight:900">${escapeHtml(u.first)} ${escapeHtml(u.last)}</div>
+            <div class="subtle" style="margin-top:3px">${escapeHtml(u.email)} • ${u.activated ? "Activated" : "Pending"}</div>
+          </div>
+          <div class="pill">${escapeHtml(fmtDate(u.createdAt))}</div>
+        </div>
+      `).join("");
+    }
+  }
+
+  function openCodeModal(code){
+    const modal = $("#codeModal");
+    $("#generatedCode").textContent = code;
+    // For a real app, this would be a proper modal element. Here, we'll just use a toast.
+    toast("Code generated and copied (attempted)", "ok", code);
+    copyText(code);
+  }
+
+  /***********************
+   * Share modal (FIXED & BEST)
+   ************************/
+  function openShareModal(){
+    const u = requireUser();
+    // Default "Include images" to false for shorter URLs unless previously set
+    $("#shareIncludeImages").checked = state.shareLast.includeImages;
+
+    const generateAndSetLink = (includeImages) => {
+      const { url, bytes } = shareLinkForCurrent(includeImages);
+      $("#shareLink").value = url;
+      $("#shareLen").textContent = `${bytes.toLocaleString()} chars`;
+      $("#shareSub").textContent = includeImages
+        ? "Includes images (may be a long link)."
+        : "Shorter link (images not included).";
+      
+      const warningEl = $("#shareLinkLengthWarning");
+      if (bytes > 8000){ // Common URL limit is around 2000-8000 chars
+        warningEl.style.display = "block";
+      } else {
+        warningEl.style.display = "none";
+      }
+    };
+
+    generateAndSetLink(state.shareLast.includeImages); // Initial render based on last state or default false
+
+    $("#shareOverlay").classList.add("active");
+
+    $("#shareCopy").onclick = async () => {
+      const txt = $("#shareLink").value;
+      const ok = await copyText(txt);
+      if (ok) toast("Copied", "ok");
+      else toast("Copy blocked", "err", "Click the field then Ctrl+C.");
+    };
+
+    $("#shareOpen").onclick = () => { window.open($("#shareLink").value, "_blank"); };
+
+    $("#shareRegen").onclick = () => {
+      // Regenerate with current checkbox state
+      generateAndSetLink($("#shareIncludeImages").checked);
+      toast("Link regenerated", "ok");
+    };
+
+    $("#shareTw").onclick = () => socialShare("twitter");
+    $("#shareLi").onclick = () => socialShare("linkedin");
+    $("#shareWa").onclick = () => socialShare("whatsapp");
+    $("#shareEm").onclick = () => socialShare("email");
+
+    $("#shareIncludeImages").onchange = (e) => {
+      state.shareLast.includeImages = e.target.checked; // Update state
+      generateAndSetLink(e.target.checked); // Re-generate link based on new state
+    };
+
+    $("#shareClose").onclick = closeShareModal;
+    $("#shareOverlay").onclick = (e) => { if (e.target === $("#shareOverlay")) closeShareModal(); };
+  }
+
+  function closeShareModal(){
+    $("#shareOverlay").classList.remove("active");
+  }
+
+  function socialShare(platform){
+    const link = $("#shareLink").value;
+    const url = encodeURIComponent(link);
+    const text = encodeURIComponent("Check out my KatCard profile");
+    const map = {
+      twitter: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+      whatsapp: `https://wa.me/?text=${text}%20${url}`,
+      email: `mailto:?subject=${encodeURIComponent("My KatCard profile")}&body=${encodeURIComponent("Here’s my profile:\n\n" + link)}`
+    };
+    const target = map[platform];
+    if (!target) return;
+    window.open(target, "_blank", "noopener,noreferrer,width=680,height=640");
+  }
+
+  // --- Visitor Chat Modal ---
+  function openVisitorChatModal(profileOwnerId, profileOwnerName) {
+      // If the owner ID isn't provided (e.g., sample preview), don't open chat
+      if (!profileOwnerId || profileOwnerId === "sample_owner_id") {
+          toast("Chat not available", "info", "This is a sample profile or chat ID is not set for this user.");
+          return;
+      }
+
+      state.currentChat.profileOwnerId = profileOwnerId; // Set active chat for visitor
+      const visitorSessionId = getVisitorSessionId(profileOwnerId); // Get persistent visitor ID for this device
+      state.currentChat.visitorSessionId = visitorSessionId;
+
+      $("#visitorChatTitle").textContent = `Chat with ${profileOwnerName}`;
+      $("#visitorChatOverlay").classList.add("active");
+      renderVisitorChatMessages();
+
+      $("#visitorChatSend").onclick = () => {
+          const text = $("#visitorChatMessageInput").value.trim();
+          if (text) {
+              addMessage(profileOwnerId, visitorSessionId, 'visitor', text);
+              $("#visitorChatMessageInput").value = '';
+              renderVisitorChatMessages();
+          }
+      };
+      $("#visitorChatMessageInput").onkeydown = (e) => {
+          if (e.key === 'Enter') {
+              e.preventDefault();
+              $("#visitorChatSend").click();
+          }
+      };
+
+      $("#visitorChatClose").onclick = closeVisitorChatModal;
+      $("#visitorChatOverlay").onclick = (e) => { if (e.target === $("#visitorChatOverlay")) closeVisitorChatModal(); };
+
+      // Mark owner's messages as read by visitor when chat is opened
+      const convo = getConversation(profileOwnerId, visitorSessionId);
+      convo.forEach(msg => {
+          if (msg.from === 'owner') msg.readVisitor = true;
+      });
+      saveState("messages");
+  }
+
+  function closeVisitorChatModal() {
+      $("#visitorChatOverlay").classList.remove("active");
+      state.currentChat.profileOwnerId = null;
+      state.currentChat.visitorSessionId = null;
+  }
+
+  function renderVisitorChatMessages() {
+      const profileOwnerId = state.currentChat.profileOwnerId;
+      const visitorSessionId = state.currentChat.visitorSessionId;
+      const chatMessagesEl = $("#chatMessages");
+      const convo = getConversation(profileOwnerId, visitorSessionId);
+
+      chatMessagesEl.innerHTML = convo.toReversed().map(msg => `
+          <div class="chat-message ${msg.from === 'visitor' ? 'visitor' : 'owner'}">
+              ${escapeHtml(msg.text)}
+              <div class="meta">${fmtDate(msg.timestamp)}</div>
+          </div>
+      `).join('');
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight; // Scroll to bottom
+  }
+  // --- End Visitor Chat Modal ---
+
+  /***********************
+   * Events wiring
+   ************************/
+  function init(){
+    loadState(); // Load state from localStorage FIRST
+    ensureAdmin(); // Then ensure admin
+    ensureDemoCodes(); // Then ensure codes
+
+    initAuthUI();
+
+    // Build activation inputs
+    const ci = $("#codeInputs");
+    ci.innerHTML = "";
+    for (let i=0;i<6;i++){
+      const inp = document.createElement("input");
+      inp.className = "input code-digit";
+      inp.maxLength = 1;
+      inp.inputMode = "text";
+      inp.autocomplete = "one-time-code";
+      inp.style.textAlign = "center";
+      inp.style.fontWeight = "900";
+      inp.style.letterSpacing = ".12em";
+      inp.addEventListener("input", (e) => {
+        e.target.value = (e.target.value || "").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,1);
+        if (e.target.value && i < 5) ci.children[i+1].focus();
+      });
+      inp.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && !inp.value && i>0) ci.children[i-1].focus();
+      });
+      ci.appendChild(inp);
+    }
+
+    // Forms
+    $("#loginForm").addEventListener("submit", handleLogin);
+    $("#regForm").addEventListener("submit", handleRegister);
+    $("#actForm").addEventListener("submit", handleActivate);
+    $("#adminLoginForm").addEventListener("submit", handleAdminLogin);
+
+    // Home quick nav
+    $("#homeGetStarted").addEventListener("click", () => go("#/register"));
+    $("#homeSignIn").addEventListener("click", () => go("#/login"));
+    $("#homeAdmin").addEventListener("click", () => go("#/admin-login"));
+
+    // Share modal triggers
+    $("#shareClose").addEventListener("click", closeShareModal);
+
+    // Route changes
+    window.addEventListener("hashchange", route);
+    // Listen for localStorage changes to enable "real-time" updates across tabs on the same device
+    window.addEventListener("storage", (event) => {
+        // Only react to changes in our app's localStorage keys
+        if (event.key && event.key.startsWith('katcard_')) {
+            loadState(); // Reload state
+            // Re-render relevant parts of the UI
+            if (location.hash.startsWith("#/chat") && state.session?.userId) {
+                renderChatOwner(); // Re-render owner chat to show new messages/unread counts
+            } else if (location.hash.startsWith("#v=")) { // If public view is open
+                 if ($("#visitorChatOverlay").classList.contains("active")) {
+                    renderVisitorChatMessages(); // Re-render visitor chat to show owner replies
+                 }
+            }
+        }
+    });
+
+    // First route
+    if (!location.hash) location.hash = "#/home";
+    route();
+  }
+
+  // Helpers
+  function renderSettingsLinkIfAny(){
+    try{
+      if (state.session?.role === "user"){
+        // Always generate a non-image link for this default display to keep it short
+        const { url } = shareLinkForCurrent(false);
+        const el = $("#settingsLink");
+        if (el) el.value = url;
+      }
+    }catch{}
+  }
+
+  // Keep dashboard settings link in sync when returning
+  document.addEventListener("click", (e) => {
+    const t = e.target;
+    if (t && (t.id === "openShare" || t.closest('[data-go="settings"]'))) {
+      renderSettingsLinkIfAny();
+    }
+  });
+
+  init();
+})();
+</script>
+</body>
+</html>
