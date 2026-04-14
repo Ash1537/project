@@ -1,7 +1,7 @@
-import { db } from "../../../lib/firebase";
+import { db } from "../../lib/firebase";
 
 export default async function handler(req, res) {
-  const uid = req.query.uid;
+  const { uid } = req.query;
 
   try {
     const doc = await db.collection("users").doc(uid).get();
@@ -25,8 +25,8 @@ export default async function handler(req, res) {
         </body>
       </html>
     `);
-
   } catch (err) {
+    console.error(err);
     return res.status(500).send("Server error");
   }
 }
