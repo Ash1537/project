@@ -1,8 +1,8 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/user/:uid",
-      "destination": "/api/user/:uid"
+      "src": "/user/(.*)",
+      "dest": "/api/user/$1"
     }
   ]
 }
